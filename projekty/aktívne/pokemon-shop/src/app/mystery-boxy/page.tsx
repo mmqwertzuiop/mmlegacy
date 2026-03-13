@@ -18,6 +18,15 @@ const S = {
   body: 'Inter Tight, sans-serif',
 }
 
+// Representative card image per tier (Bronze→Diamond)
+const TIER_IMAGES = [
+  'https://images.pokemontcg.io/sv1/252_hires.png',      // Bronze  — Koraidon ex
+  'https://images.pokemontcg.io/swsh12/186_hires.png',   // Silver  — Giratina V Full Art
+  'https://images.pokemontcg.io/swsh7/218_hires.png',    // Gold    — Rayquaza VMAX Alt Art
+  'https://images.pokemontcg.io/swsh7/215_hires.png',    // Platinum — Umbreon VMAX Alt Art
+  'https://images.pokemontcg.io/sv3pt5/199_hires.png',   // Diamond — Charizard ex SIR
+]
+
 export default function MysteryBoxyPage() {
   const [flipped, setFlipped] = useState<Record<number, boolean>>({})
 
@@ -127,41 +136,49 @@ export default function MysteryBoxyPage() {
                   el.style.boxShadow = 'none'
                 }}
               >
-                {/* Top bar */}
-                <div style={{ height: '3px', background: tier.color, boxShadow: `0 0 12px ${tier.color}` }} />
-
-                {/* Header */}
-                <div style={{ padding: '28px 20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  {/* Flip box */}
+                {/* Card image flip area */}
+                <div style={{ width: '100%', paddingBottom: '140%', position: 'relative' }}>
                   <div
-                    style={{ width: '76px', height: '76px', perspective: '600px', cursor: 'pointer', marginBottom: '20px' }}
+                    style={{ position: 'absolute', inset: 0, perspective: '1000px', cursor: 'pointer' }}
                     onClick={() => setFlipped(p => ({ ...p, [i]: !p[i] }))}
                   >
                     <div style={{
                       width: '100%', height: '100%',
                       transformStyle: 'preserve-3d',
-                      transition: 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+                      transition: 'transform 0.85s cubic-bezier(0.16, 1, 0.3, 1)',
                       transform: flipped[i] ? 'rotateY(180deg)' : 'rotateY(0deg)',
                     }}>
-                      <div style={{
-                        position: 'absolute', inset: 0,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        backfaceVisibility: 'hidden',
-                        background: `${tier.color}15`,
-                        border: `2px solid ${tier.color}55`,
-                        fontFamily: S.display, fontSize: '40px', color: tier.color,
-                      }}>?</div>
-                      <div style={{
-                        position: 'absolute', inset: 0,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        backfaceVisibility: 'hidden',
-                        transform: 'rotateY(180deg)',
-                        background: tier.color, color: '#000',
-                        fontFamily: S.display, fontSize: '32px',
-                      }}>✓</div>
+                      {/* Front — mystery */}
+                      <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', overflow: 'hidden', background: `${tier.color}08` }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={TIER_IMAGES[i]} alt={tier.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(14px) brightness(0.18) saturate(2)', transform: 'scale(1.2)' }} />
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                          <span style={{ fontFamily: S.display, fontSize: '88px', color: tier.color, lineHeight: 1, textShadow: `0 0 50px ${tier.color}, 0 0 100px ${tier.color}60` }}>?</span>
+                          <span style={{ fontFamily: S.mono, fontSize: '8px', letterSpacing: '0.35em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase' }}>klikni pre reveal</span>
+                        </div>
+                      </div>
+                      {/* Back — revealed */}
+                      <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', overflow: 'hidden' }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={TIER_IMAGES[i]} alt={tier.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                        {/* Holographic shimmer */}
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(115deg, transparent 0%, rgba(255,210,110,0.3) 35%, rgba(100,200,255,0.3) 65%, transparent 100%)', backgroundSize: '200% 200%', animation: 'holo 3s linear infinite', mixBlendMode: 'color-dodge', pointerEvents: 'none' }} />
+                        {/* Bottom label */}
+                        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '24px 16px 14px', background: 'linear-gradient(transparent, rgba(0,0,0,0.92))', textAlign: 'center' }}>
+                          <span style={{ fontFamily: S.display, fontSize: '16px', letterSpacing: '0.18em', color: tier.color }}>✓ ODHALENÉ</span>
+                        </div>
+                        {/* Tier glow overlay */}
+                        <div style={{ position: 'absolute', inset: 0, boxShadow: `inset 0 0 40px ${tier.color}25`, pointerEvents: 'none' }} />
+                      </div>
                     </div>
                   </div>
+                </div>
 
+                {/* Top bar */}
+                <div style={{ height: '3px', background: tier.color, boxShadow: `0 0 16px ${tier.color}` }} />
+
+                {/* Header */}
+                <div style={{ padding: '20px 20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <h3 style={{ fontFamily: S.display, fontSize: '30px', color: tier.color, letterSpacing: '0.08em', marginBottom: '2px' }}>
                     {tier.name.toUpperCase()}
                   </h3>
@@ -228,8 +245,8 @@ export default function MysteryBoxyPage() {
             ))}
           </div>
 
-          <p style={{ textAlign: 'center', fontFamily: S.mono, fontSize: '10px', marginTop: '16px', color: 'var(--dim)' }}>
-            Klikni na ? pre 3D reveal animáciu
+          <p style={{ textAlign: 'center', fontFamily: S.mono, fontSize: '10px', marginTop: '16px', color: 'var(--dim)', letterSpacing: '0.2em' }}>
+            KLIKNI NA KARTU PRE 3D REVEAL
           </p>
         </div>
       </section>
