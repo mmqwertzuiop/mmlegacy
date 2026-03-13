@@ -18,7 +18,62 @@ const S = {
   body: 'Inter Tight, sans-serif',
 }
 
-// Representative card image per tier (Bronze→Diamond)
+// Premium gift box SVG — shown on the FRONT (mystery side) of each tier card
+function BoxFront({ color }: { color: string }) {
+  return (
+    <div style={{ width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${color}06`, overflow: 'hidden' }}>
+      {/* Radial glow */}
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 50% 65%, ${color}22 0%, transparent 62%)`, pointerEvents: 'none' }} />
+      {/* Floating particles */}
+      {[0,1,2,3,4,5,6,7].map(j => (
+        <div key={j} style={{ position: 'absolute', width: '2px', height: '2px', borderRadius: '50%', background: color, opacity: 0.35, left: `${12 + j * 11}%`, top: `${18 + (j % 4) * 18}%`, animation: `float-particle ${3.5 + j * 0.4}s linear infinite`, animationDelay: `${j * 0.45}s` }} />
+      ))}
+      {/* Box SVG */}
+      <svg viewBox="0 0 180 205" style={{ width: '74%', position: 'relative', zIndex: 1, filter: `drop-shadow(0 14px 32px ${color}55)` }}>
+        {/* Lid */}
+        <rect x="14" y="52" width="152" height="44" rx="2" fill={`${color}18`} stroke={color} strokeWidth="1.3" />
+        <rect x="14" y="52" width="152" height="7" fill={`${color}30`} rx="2" />
+        {/* Ribbon H on lid */}
+        <rect x="14" y="65" width="152" height="11" fill={`${color}20`} />
+        {/* Ribbon V on lid */}
+        <rect x="79" y="52" width="22" height="44" fill={`${color}20`} />
+        {/* Bow — left loop */}
+        <path d="M90 52 C78 33 54 34 57 48 C60 59 80 55 90 52Z" fill={color} opacity="0.88" />
+        <path d="M90 52 C80 37 61 39 64 49 C67 57 81 54 90 52Z" fill="rgba(0,0,0,0.18)" />
+        {/* Bow — right loop */}
+        <path d="M90 52 C102 33 126 34 123 48 C120 59 100 55 90 52Z" fill={color} opacity="0.88" />
+        <path d="M90 52 C100 37 119 39 116 49 C113 57 99 54 90 52Z" fill="rgba(0,0,0,0.18)" />
+        {/* Bow center knot */}
+        <ellipse cx="90" cy="52" rx="10" ry="8" fill={color} />
+        <ellipse cx="90" cy="52" rx="5" ry="4" fill="rgba(0,0,0,0.2)" />
+        {/* Box body */}
+        <rect x="14" y="96" width="152" height="100" rx="2" fill={`${color}12`} stroke={color} strokeWidth="1.3" />
+        <rect x="14" y="96" width="152" height="5" fill={`${color}28`} />
+        {/* Ribbon V on body */}
+        <rect x="79" y="96" width="22" height="100" fill={`${color}18`} />
+        {/* Ribbon H on body */}
+        <rect x="14" y="138" width="152" height="11" fill={`${color}14`} />
+        {/* Side shine */}
+        <rect x="23" y="102" width="4" height="84" fill={`${color}10`} rx="2" />
+        {/* "?" */}
+        <text x="90" y="166" textAnchor="middle" fontSize="46" fill={color} fontFamily="Bebas Neue, sans-serif" opacity="0.92">?</text>
+        {/* Stars */}
+        <text x="30" y="113" fontSize="11" fill={color} opacity="0.5">★</text>
+        <text x="146" y="109" fontSize="9" fill={color} opacity="0.42">★</text>
+        <text x="23" y="170" fontSize="7" fill={color} opacity="0.32">✦</text>
+        <text x="150" y="175" fontSize="9" fill={color} opacity="0.42">✦</text>
+        <circle cx="132" cy="122" r="2" fill={color} opacity="0.28" />
+        <circle cx="52" cy="148" r="1.5" fill={color} opacity="0.22" />
+      </svg>
+      {/* Hint */}
+      <div style={{ position: 'absolute', bottom: '12px', left: 0, right: 0, textAlign: 'center' }}>
+        <span style={{ fontFamily: S.mono, fontSize: '7px', letterSpacing: '0.35em', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase' }}>klikni pre reveal</span>
+      </div>
+    </div>
+  )
+}
+
+// Representative card image per tier (Bronze→Diamond) — shown on the BACK (revealed side)
 const TIER_IMAGES = [
   'https://images.pokemontcg.io/sv1/252_hires.png',      // Bronze  — Koraidon ex
   'https://images.pokemontcg.io/swsh12/186_hires.png',   // Silver  — Giratina V Full Art
@@ -148,14 +203,9 @@ export default function MysteryBoxyPage() {
                       transition: 'transform 0.85s cubic-bezier(0.16, 1, 0.3, 1)',
                       transform: flipped[i] ? 'rotateY(180deg)' : 'rotateY(0deg)',
                     }}>
-                      {/* Front — mystery */}
-                      <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', overflow: 'hidden', background: `${tier.color}08` }}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={TIER_IMAGES[i]} alt={tier.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(14px) brightness(0.18) saturate(2)', transform: 'scale(1.2)' }} />
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-                          <span style={{ fontFamily: S.display, fontSize: '88px', color: tier.color, lineHeight: 1, textShadow: `0 0 50px ${tier.color}, 0 0 100px ${tier.color}60` }}>?</span>
-                          <span style={{ fontFamily: S.mono, fontSize: '8px', letterSpacing: '0.35em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase' }}>klikni pre reveal</span>
-                        </div>
+                      {/* Front — mystery box visual */}
+                      <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden' }}>
+                        <BoxFront color={tier.color} />
                       </div>
                       {/* Back — revealed */}
                       <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', overflow: 'hidden' }}>
