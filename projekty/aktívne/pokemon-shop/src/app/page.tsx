@@ -550,6 +550,43 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ─── VÝKUP TEASER ─── */}
+      <section style={{ padding: '80px 0', background: 'var(--void)', borderTop: '1px solid var(--surface-2)' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 48px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '64px', alignItems: 'center' }}>
+          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+            <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.4em', color: 'var(--orange)', marginBottom: '16px' }}>MÁŠ KARTY NA PREDAJ?</p>
+            <h2 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(48px, 5vw, 72px)', lineHeight: 0.92, color: 'var(--ghost)', marginBottom: '20px', letterSpacing: '0.02em' }}>
+              VYKUPUJEME<br /><span style={{ color: 'var(--orange)' }}>TVOJE KARTY.</span>
+            </h2>
+            <p style={{ fontFamily: 'Inter Tight, sans-serif', fontSize: '16px', lineHeight: 1.7, color: 'var(--dim)', marginBottom: '32px', maxWidth: '420px' }}>
+              PSA graded, raw singles, booster boxy. Platíme 75–85% trhovej hodnoty, rýchlo a bez zbytočností.
+            </p>
+            <Link href="/vykup">
+              <button className="btn-primary" style={{ padding: '16px 40px', fontSize: '12px', letterSpacing: '0.15em' }}>
+                ZISTIŤ CENU →
+              </button>
+            </Link>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px' }}>
+              {[
+                { label: 'CHARIZARD EX SIR', grade: 'PSA 10', price: '350–420€', color: 'var(--orange)' },
+                { label: 'UMBREON VMAX AA', grade: 'PSA 10', price: '800–1000€', color: 'var(--gold)' },
+                { label: 'RAYQUAZA VMAX AA', grade: 'PSA 9', price: '400–500€', color: 'var(--blue)' },
+                { label: 'PRISMATIC EVO BOX', grade: 'Sealed', price: '160–185€', color: 'var(--green)' },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: '20px 18px', background: 'var(--surface)', border: '1px solid var(--surface-2)' }}>
+                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', letterSpacing: '0.1em', color: item.color, marginBottom: '6px' }}>{item.grade}</p>
+                  <p style={{ fontFamily: 'Inter Tight, sans-serif', fontSize: '13px', color: 'var(--ghost)', marginBottom: '8px', lineHeight: 1.3 }}>{item.label}</p>
+                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '14px', fontWeight: 700, color: 'var(--green)' }}>{item.price}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ─── CTA ─── */}
       <section style={{ padding: '100px 0', position: 'relative', overflow: 'hidden', background: 'var(--surface)', borderTop: '1px solid var(--surface-2)' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 80% 50% at 50% 50%, rgba(250,93,41,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />

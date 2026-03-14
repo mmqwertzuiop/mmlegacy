@@ -9,6 +9,7 @@ const navLinks = [
   { href: '/shop/singles', label: 'SINGLES' },
   { href: '/mystery-boxy', label: 'MYSTERY' },
   { href: '/shop', label: 'VŠETKO' },
+  { href: '/vykup', label: 'VÝKUP', highlight: true },
 ]
 
 export default function Navbar() {
@@ -39,9 +40,9 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className="font-mono text-xs tracking-widest transition-premium"
-              style={{ color: 'var(--dim)' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--ghost)')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--dim)')}
+              style={{ color: link.highlight ? 'var(--orange)' : 'var(--dim)' }}
+              onMouseEnter={e => (e.currentTarget.style.color = link.highlight ? 'var(--gold)' : 'var(--ghost)')}
+              onMouseLeave={e => (e.currentTarget.style.color = link.highlight ? 'var(--orange)' : 'var(--dim)')}
             >
               {link.label}
             </Link>
