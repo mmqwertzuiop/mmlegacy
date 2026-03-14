@@ -71,6 +71,11 @@ export default function VykupPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
+            <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.2em', color: 'var(--dim)', textDecoration: 'none', marginBottom: '28px', transition: 'color 0.2s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--ghost)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--dim)')}>
+              ← DOMOV
+            </Link>
             <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.4em', color: 'var(--orange)', marginBottom: '20px' }}>
               MM LEGACY — VÝKUP KARIET
             </p>
