@@ -7,7 +7,7 @@ const navLinks = [
   { href: '/shop/booster-boxy', label: 'BOOSTER BOXY' },
   { href: '/shop/graded', label: 'PSA GRADED' },
   { href: '/shop/singles', label: 'SINGLES' },
-  { href: '/shop/mystery-boxy', label: 'MYSTERY' },
+  { href: '/mystery-boxy', label: 'MYSTERY' },
   { href: '/shop', label: 'VŠETKO' },
 ]
 

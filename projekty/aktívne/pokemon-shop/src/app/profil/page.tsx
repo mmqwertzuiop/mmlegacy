@@ -22,7 +22,7 @@ export default function ProfilPage() {
 
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '48px 48px' }}>
         <div className="mb-12" style={{ borderBottom: '1px solid var(--surface-2)', paddingBottom: '2rem' }}>
           <p className="font-mono text-xs tracking-widest mb-2" style={{ color: 'var(--orange)' }}>MM LEGACY</p>
           <h1 className="font-headline text-6xl" style={{ color: 'var(--ghost)' }}>PROFIL</h1>

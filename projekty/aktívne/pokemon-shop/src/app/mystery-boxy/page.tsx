@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { MYSTERY_BOX_TIERS, formatPrice } from '@/data/products'
 import CountdownTimer from '@/components/ui/CountdownTimer'
 
@@ -88,10 +89,17 @@ export default function MysteryBoxyPage() {
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
 
+      {/* ── BREADCRUMB ── */}
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '16px 48px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <Link href="/" style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', color: 'var(--dim)', textDecoration: 'none', letterSpacing: '0.15em' }}>DOMOV</Link>
+        <span style={{ color: 'var(--surface-2)', fontSize: '10px' }}>›</span>
+        <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', color: 'var(--ghost)', letterSpacing: '0.15em' }}>MYSTERY BOXY</span>
+      </div>
+
       {/* ── HERO ── */}
       <section style={{
         position: 'relative',
-        padding: '100px 0 80px',
+        padding: '32px 0 60px',
         textAlign: 'center',
         overflow: 'hidden',
         borderBottom: '1px solid var(--surface-2)',

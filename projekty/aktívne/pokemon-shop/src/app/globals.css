@@ -46,11 +46,11 @@ body {
   background: var(--orange);
 }
 
-/* Custom cursor — premium circle reticle */
-.cursor {
-  width: 26px;
-  height: 26px;
-  border: 1.5px solid rgba(250, 93, 41, 0.85);
+/* Custom cursor — dual ring precision */
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--orange);
   border-radius: 50%;
   position: fixed;
   top: 0;
@@ -58,51 +58,31 @@ body {
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+  transition: width 0.15s ease, height 0.15s ease, background 0.15s ease;
 }
-/* Inner dot */
-.cursor::before {
-  content: '';
-  position: absolute;
-  width: 3px;
-  height: 3px;
+.cursor-ring {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(250, 93, 41, 0.5);
   border-radius: 50%;
-  background: var(--orange);
-  top: 50%;
-  left: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9998;
   transform: translate(-50%, -50%);
-  transition: background 0.22s ease;
+  transition: width 0.35s ease, height 0.35s ease, border-color 0.35s ease, background 0.35s ease;
 }
-/* Rotating accent arc */
-.cursor::after {
-  content: '';
-  position: absolute;
-  inset: -5px;
-  border-radius: 50%;
-  border: 1px solid transparent;
-  border-top-color: var(--orange);
-  border-right-color: var(--orange);
-  animation: cursor-spin 2.5s linear infinite;
-  transition: border-color 0.22s ease;
-}
-@keyframes cursor-spin {
-  to { transform: rotate(360deg); }
-}
-.cursor.hovering {
-  width: 44px;
-  height: 44px;
-  border-color: rgba(245, 158, 11, 0.65);
-  background: rgba(245, 158, 11, 0.06);
-}
-.cursor.hovering::before {
+.cursor-dot.hovering {
+  width: 8px;
+  height: 8px;
   background: var(--gold);
-  width: 4px;
-  height: 4px;
 }
-.cursor.hovering::after {
-  border-top-color: var(--gold);
-  border-right-color: var(--gold);
-  animation: cursor-spin 1.2s linear infinite;
+.cursor-ring.hovering {
+  width: 48px;
+  height: 48px;
+  border-color: rgba(245, 158, 11, 0.6);
+  background: rgba(245, 158, 11, 0.05);
 }
 
 /* Typography */

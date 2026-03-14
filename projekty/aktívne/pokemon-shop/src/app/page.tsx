@@ -190,9 +190,9 @@ const LOYALTY_LEVELS = [
 ]
 
 export default function Home() {
-  const userXP = 2400
+  const userXP = 0
   const maxXP = 5000
-  const xpPercent = Math.min((userXP / maxXP) * 100, 100)
+  const xpPercent = 0
 
   return (
     <div style={{ background: 'var(--void)' }}>
@@ -219,7 +219,7 @@ export default function Home() {
           width: '100%',
           maxWidth: '1400px',
           margin: '0 auto',
-          padding: '100px 48px 80px',
+          padding: '32px 48px 60px',
           display: 'grid',
           gridTemplateColumns: '1.1fr 1fr',
           gap: '24px',
@@ -329,6 +329,26 @@ export default function Home() {
         </div>
       </div>
 
+      {/* ─── TRUST BADGES ─── */}
+      <section style={{ padding: '28px 0', background: 'var(--void)', borderBottom: '1px solid var(--surface-2)' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 48px', display: 'flex', justifyContent: 'center', gap: '48px', flexWrap: 'wrap' }}>
+          {[
+            { icon: '✓', label: 'OVERENÁ AUTENTICKOSŤ', sub: 'Každý produkt garantovaný' },
+            { icon: '⚡', label: 'RÝCHLE DORUČENIE', sub: '1–3 pracovné dni' },
+            { icon: '🔒', label: 'BEZPEČNÁ PLATBA', sub: 'SSL šifrované transakcie' },
+            { icon: '↩', label: '14-DŇOVÝ RETURN', sub: 'Bez otázok' },
+          ].map((b, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '18px', color: 'var(--orange)' }}>{b.icon}</span>
+              <div>
+                <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', fontWeight: 700, color: 'var(--ghost)', letterSpacing: '0.1em' }}>{b.label}</p>
+                <p style={{ fontFamily: 'Inter Tight, sans-serif', fontSize: '12px', color: 'var(--dim)', marginTop: '2px' }}>{b.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ─── COUNTDOWN ─── */}
       <section style={{ padding: '60px 0', background: 'var(--surface)', borderTop: '1px solid var(--surface-2)', borderBottom: '1px solid var(--surface-2)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 48px', textAlign: 'center' }}>
@@ -431,13 +451,13 @@ export default function Home() {
                 </p>
                 <div style={{ padding: '24px', background: 'var(--surface-2)', border: '1px solid var(--surface)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '12px', color: 'var(--ghost)' }}>TVOJ LEVEL</span>
+                    <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '12px', color: 'var(--ghost)' }}>DEMO LEVEL</span>
                     <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '12px', fontWeight: 700, color: 'var(--gold)' }}>{userXP.toLocaleString()} / {maxXP.toLocaleString()} XP</span>
                   </div>
                   <div style={{ height: '4px', width: '100%', background: 'var(--surface)', borderRadius: 0 }}>
                     <div style={{ height: '100%', width: `${xpPercent}%`, background: 'var(--gold)', transition: 'width 1s ease' }} />
                   </div>
-                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', marginTop: '8px', color: 'var(--dim)' }}>Bronze Collector — {maxXP - userXP} XP do Silver levelu</p>
+                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', marginTop: '8px', color: 'var(--dim)' }}>Zaregistruj sa a začni zbierať XP</p>
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

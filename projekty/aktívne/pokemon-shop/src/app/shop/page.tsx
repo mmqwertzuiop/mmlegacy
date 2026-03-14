@@ -8,9 +8,10 @@ export const metadata: Metadata = {
 }
 
 const CATEGORIES = [
-  { label: 'BOOSTER BOXY', href: '/shop?category=booster-box', emoji: '📦' },
-  { label: 'PSA GRADED', href: '/shop?category=psa-graded', emoji: '🏆' },
-  { label: 'SINGLES', href: '/shop?category=singles', emoji: '✨' },
+  { label: 'BOOSTER BOXY', href: '/shop/booster-boxy', icon: '▸' },
+  { label: 'PSA GRADED', href: '/shop/graded', icon: '▸' },
+  { label: 'SINGLES', href: '/shop/singles', icon: '▸' },
+  { label: 'MYSTERY BOXY', href: '/mystery-boxy', icon: '▸' },
 ]
 
 export default function ShopPage() {
@@ -85,7 +86,7 @@ export default function ShopPage() {
               fontSize: '1.05rem',
               color: 'var(--dim)',
               marginBottom: '2.5rem',
-              fontFamily: 'monospace',
+              fontFamily: 'Space Mono, monospace',
               letterSpacing: '0.05em',
             }}
           >
@@ -96,7 +97,7 @@ export default function ShopPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
+              gridTemplateColumns: 'repeat(4, 1fr)',
               gap: '0.75rem',
               maxWidth: '36rem',
             }}
@@ -117,7 +118,7 @@ export default function ShopPage() {
                   textDecoration: 'none',
                 }}
               >
-                <span style={{ fontSize: '1.4rem' }}>{cat.emoji}</span>
+                <span style={{ fontSize: '1.4rem' }}>{cat.icon}</span>
                 <span
                   style={{
                     fontFamily: 'Space Mono, monospace',

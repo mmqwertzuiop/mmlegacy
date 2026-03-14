@@ -11,7 +11,7 @@ export default function KosikPage() {
 
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '48px 48px' }}>
         <div className="mb-12" style={{ borderBottom: '1px solid var(--surface-2)', paddingBottom: '2rem' }}>
           <p className="font-mono text-xs tracking-widest mb-2" style={{ color: 'var(--orange)' }}>MM LEGACY</p>
           <h1 className="font-headline text-6xl md:text-7xl" style={{ color: 'var(--ghost)' }}>KOŠÍK</h1>
@@ -88,7 +88,7 @@ export default function KosikPage() {
 
             {/* Summary */}
             <div className="lg:col-span-1">
-              <div style={{ position: 'sticky', top: '80px' }}>
+              <div style={{ position: 'sticky', top: '120px' }}>
                 <div className="p-6" style={{ background: 'var(--surface)', border: '1px solid var(--surface-2)' }}>
                   <h2 className="font-headline text-2xl mb-6" style={{ color: 'var(--ghost)' }}>SÚHRN</h2>
 

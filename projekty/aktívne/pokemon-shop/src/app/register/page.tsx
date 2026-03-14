@@ -19,7 +19,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6" style={{ background: 'var(--void)' }}>
+    <div className="flex items-center justify-center px-6" style={{ background: 'var(--void)', minHeight: 'calc(100vh - 104px)' }}>
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
