@@ -287,9 +287,26 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* RIGHT: Cards fan — shifted left to visually center across the page */}
+          {/* RIGHT: Cards fan + live activity */}
           <div style={{ position: 'relative', marginLeft: '-80px' }}>
             <HeroCardFan />
+            {/* Live activity feed */}
+            <div style={{ marginTop: '-20px', display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '360px', marginLeft: 'auto', marginRight: '0' }}>
+              <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', letterSpacing: '0.25em', color: 'var(--dim)', marginBottom: '4px' }}>● LIVE AKTIVITA</p>
+              {[
+                { user: 'M***aster', action: 'kúpil', item: 'Diamond Mystery Box', time: '2 min', color: '#B9F2FF' },
+                { user: 'U***eonfan', action: 'kúpil', item: 'Umbreon VMAX Alt Art', time: '7 min', color: 'var(--gold)' },
+                { user: 'P***achu99', action: 'objednal', item: 'PSA 10 Charizard ex SIR', time: '14 min', color: 'var(--orange)' },
+              ].map((a, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--surface-2)' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: a.color, flexShrink: 0 }} />
+                  <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--dim)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <span style={{ color: 'var(--ghost)' }}>{a.user}</span> {a.action} <span style={{ color: a.color }}>{a.item}</span>
+                  </span>
+                  <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--dim)', flexShrink: 0 }}>{a.time}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

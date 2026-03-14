@@ -2,20 +2,47 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { supabase } from '@/lib/supabase'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', confirm: '' })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (formData.password !== formData.confirm) return
+    if (formData.password !== formData.confirm) {
+      setError('Heslá sa nezhodujú.')
+      return
+    }
+    if (formData.password.length < 6) {
+      setError('Heslo musí mať aspoň 6 znakov.')
+      return
+    }
     setLoading(true)
-    setTimeout(() => {
+    setError('')
+
+    const { error: authError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: { username: formData.username },
+      },
+    })
+
+    if (authError) {
+      setError(
+        authError.message === 'User already registered'
+          ? 'Tento email je už zaregistrovaný.'
+          : authError.message
+      )
       setLoading(false)
-      setSuccess(true)
-    }, 1000)
+      return
+    }
+
+    setSuccess(true)
+    setLoading(false)
   }
 
   return (
@@ -38,14 +65,20 @@ export default function RegisterPage() {
             <div className="text-center py-8">
               <div className="w-16 h-16 flex items-center justify-center mx-auto mb-4 text-4xl" style={{ background: 'rgba(34,197,94,0.2)', color: 'var(--green)' }}>✓</div>
               <h2 className="font-headline text-3xl mb-2" style={{ color: 'var(--ghost)' }}>VITAJ!</h2>
-              <p className="font-mono text-sm mb-2" style={{ color: 'var(--dim)' }}>Účet bol vytvorený.</p>
-              <p className="font-mono text-sm mb-6" style={{ color: 'var(--gold)' }}>+500 XP BONUS pripisaný!</p>
+              <p className="font-mono text-sm mb-2" style={{ color: 'var(--dim)' }}>Skontroluj email a potvrď registráciu.</p>
+              <p className="font-mono text-sm mb-6" style={{ color: 'var(--gold)' }}>+500 XP BONUS ťa čaká!</p>
               <Link href="/login">
                 <button className="btn-primary px-8 py-3 text-sm tracking-widest">PRIHLÁSIŤ SA</button>
               </Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-3 font-mono text-xs" style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid var(--red)', color: 'var(--red)' }}>
+                  {error}
+                </div>
+              )}
+
               {/* XP bonus banner */}
               <div className="p-3 mb-2 font-mono text-xs text-center" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', color: 'var(--gold)' }}>
                 Registrácia zadarmo + <strong>+500 XP</strong> BONUS
