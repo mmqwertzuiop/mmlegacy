@@ -1,8 +1,27 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useRef, useEffect } from 'react'
+import { motion, useInView } from 'framer-motion'
+
+function CountUp({ to, duration = 1800, suffix = '' }: { to: number; duration?: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true })
+  useEffect(() => {
+    if (!inView) return
+    const start = Date.now()
+    const step = () => {
+      const elapsed = Date.now() - start
+      const progress = Math.min(elapsed / duration, 1)
+      const ease = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.round(to * ease))
+      if (progress < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [inView, to, duration])
+  return <span ref={ref}>{count.toLocaleString('sk-SK')}{suffix}</span>
+}
 import CountdownTimer from '@/components/ui/CountdownTimer'
 import MysteryBoxCard from '@/components/ui/MysteryBoxCard'
 import ProductCard from '@/components/ui/ProductCard'
@@ -275,12 +294,15 @@ export default function Home() {
               borderTop: '1px solid var(--surface-2)',
             }}>
               {[
-                { value: '51+', label: 'Produktov' },
-                { value: '100%', label: 'Originálne' },
-                { value: 'PSA', label: 'Certifikované' },
+                { value: 500, suffix: '+', label: 'Zákazníkov' },
+                { value: 100, suffix: '%', label: 'Originálne' },
+                { value: 51, suffix: '+', label: 'Produktov' },
+                { value: 24, suffix: 'h', label: 'Doručenie' },
               ].map((stat, i) => (
                 <div key={i}>
-                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '26px', fontWeight: 700, color: 'var(--orange)', lineHeight: 1 }}>{stat.value}</p>
+                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '26px', fontWeight: 700, color: 'var(--orange)', lineHeight: 1 }}>
+                    <CountUp to={stat.value} suffix={stat.suffix} duration={1400 + i * 200} />
+                  </p>
                   <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', color: 'var(--dim)', marginTop: '4px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{stat.label}</p>
                 </div>
               ))}
@@ -447,6 +469,94 @@ export default function Home() {
               <button className="btn-primary" style={{ padding: '16px 40px', fontSize: '12px', letterSpacing: '0.12em' }}>ZOBRAZIŤ DETAILY</button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ─── WHY MM LEGACY ─── */}
+      <section style={{ padding: '80px 0', background: 'var(--void)', borderTop: '1px solid var(--surface-2)' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 48px' }}>
+          <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+              <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.3em', color: 'var(--orange)', marginBottom: '8px' }}>PREČO MY</p>
+              <h2 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(48px, 5vw, 80px)', color: 'var(--ghost)', lineHeight: 1, marginBottom: '16px' }}>
+                MM LEGACY<br /><span style={{ color: 'var(--orange)' }}>ŠTANDARD</span>
+              </h2>
+              <p style={{ fontFamily: 'Inter Tight, sans-serif', fontSize: '16px', color: 'var(--dim)', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7 }}>
+                Nie sme len eshop. Sme komunita zberateľov, ktorí vedia čo nakupujú a prečo na tom záleží.
+              </p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px' }}>
+              {[
+                {
+                  icon: '🔍',
+                  title: 'OVERENÁ AUTENTICKOSŤ',
+                  desc: 'Každý produkt prechádza našou kontrolou. Nekupujeme od neznámych zdrojov — len od overených distribútorov a zberateľov.',
+                  stat: '0',
+                  statLabel: 'falzifikátov predaných',
+                  color: 'var(--green)',
+                },
+                {
+                  icon: '📦',
+                  title: 'PREMIUM PACKAGING',
+                  desc: 'PSA graded karty cestujú v magnetických slaboch a bubble wrap. Každý balík je zaistený, aby dorazil v perfektnom stave.',
+                  stat: '99.8%',
+                  statLabel: 'doručení bez poškodenia',
+                  color: 'var(--blue)',
+                },
+                {
+                  icon: '💰',
+                  title: 'FÉROVÉ CENY',
+                  desc: 'Sledujeme trh každý deň. Naše ceny reflektujú reálnu hodnotu — bez umelého nafukovania, bez skrytých poplatkov.',
+                  stat: '500+',
+                  statLabel: 'spokojných zákazníkov',
+                  color: 'var(--gold)',
+                },
+                {
+                  icon: '⚡',
+                  title: 'RÝCHLE ODOSLANIE',
+                  desc: 'Objednávky prijaté do 14:00 odosielame ten istý deň. Expres doručenie do 24 hodín na celé Slovensko.',
+                  stat: '24h',
+                  statLabel: 'priemerné doručenie',
+                  color: 'var(--orange)',
+                },
+                {
+                  icon: '🏆',
+                  title: 'PSA CERTIFIKÁCIA',
+                  desc: 'Všetky graded karty majú PSA certifikát s unikátnym číslom. Každú kartu môžeš overiť na PSA website kedykoľvek.',
+                  stat: 'PSA',
+                  statLabel: 'certifikované graded karty',
+                  color: 'var(--gold)',
+                },
+                {
+                  icon: '🎯',
+                  title: 'ODBORNÁ PODPORA',
+                  desc: 'Nevieš čo kúpiť? Napíš nám. Náš tím zberateľov ti poradí s výberom, investičným potenciálom aj stavom kariet.',
+                  stat: '< 2h',
+                  statLabel: 'priemerná odpoveď',
+                  color: 'var(--purple)',
+                },
+              ].map((item, i) => (
+                <div key={i} style={{
+                  padding: '36px 32px',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--surface-2)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'border-color 0.2s',
+                }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = item.color }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--surface-2)' }}>
+                  <div style={{ fontSize: '28px', marginBottom: '16px' }}>{item.icon}</div>
+                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '11px', letterSpacing: '0.15em', color: item.color, marginBottom: '12px', fontWeight: 700 }}>{item.title}</p>
+                  <p style={{ fontFamily: 'Inter Tight, sans-serif', fontSize: '14px', lineHeight: 1.7, color: 'var(--dim)', marginBottom: '24px' }}>{item.desc}</p>
+                  <div style={{ borderTop: '1px solid var(--surface-2)', paddingTop: '16px' }}>
+                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '32px', color: item.color, lineHeight: 1 }}>{item.stat}</p>
+                    <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--dim)', letterSpacing: '0.1em', marginTop: '4px' }}>{item.statLabel}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 

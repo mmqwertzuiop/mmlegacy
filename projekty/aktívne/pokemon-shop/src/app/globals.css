@@ -236,3 +236,84 @@ body {
   0%, 100% { box-shadow: 0 0 6px rgba(250,93,41,0.6); }
   50%       { box-shadow: 0 0 16px rgba(250,93,41,1), 0 0 30px rgba(250,93,41,0.4); }
 }
+
+/* PSA-10 rainbow border glow */
+@keyframes rainbow-border {
+  0%   { box-shadow: 0 0 0 1px #ff6b6b, 0 0 20px rgba(255,107,107,0.35); }
+  16%  { box-shadow: 0 0 0 1px #ffa040, 0 0 20px rgba(255,160,64,0.35); }
+  33%  { box-shadow: 0 0 0 1px #ffd700, 0 0 20px rgba(255,215,0,0.4); }
+  50%  { box-shadow: 0 0 0 1px #00ff88, 0 0 20px rgba(0,255,136,0.35); }
+  66%  { box-shadow: 0 0 0 1px #00cfff, 0 0 20px rgba(0,207,255,0.35); }
+  83%  { box-shadow: 0 0 0 1px #bf5fff, 0 0 20px rgba(191,95,255,0.35); }
+  100% { box-shadow: 0 0 0 1px #ff6b6b, 0 0 20px rgba(255,107,107,0.35); }
+}
+.psa-10-rainbow {
+  animation: rainbow-border 3.5s linear infinite;
+}
+
+/* Scan line sweep across card */
+@keyframes scan {
+  0%   { transform: translateY(-100%) skewY(-2deg); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(250%) skewY(-2deg); opacity: 0; }
+}
+
+/* HOT badge float */
+@keyframes hot-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-3px); }
+}
+.badge-hot {
+  animation: hot-float 1.8s ease-in-out infinite;
+}
+
+/* Shimmer overlay for cards on hover */
+@keyframes card-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Price tag pop-in */
+@keyframes price-pop {
+  0%   { transform: scale(0.85); opacity: 0; }
+  70%  { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Glow border on hover for product cards */
+.product-glow:hover {
+  box-shadow: 0 0 0 1px var(--orange), 0 8px 40px rgba(250,93,41,0.2);
+}
+
+/* Stats count up visual pulse */
+@keyframes stat-appear {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Gradient text effect */
+.text-gradient-orange {
+  background: linear-gradient(135deg, var(--orange), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated underline for links */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--orange);
+  transition: width 0.3s ease;
+}
+.link-underline:hover::after {
+  width: 100%;
+}
