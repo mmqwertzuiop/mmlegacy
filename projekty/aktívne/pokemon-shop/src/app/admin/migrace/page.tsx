@@ -83,10 +83,13 @@ CREATE POLICY "Admin can read all profiles" ON profiles FOR SELECT USING (true);
     title: 'PRODUCTS TABUĽKA',
     desc: 'Tabuľka pre produkty + Supabase Storage bucket pre obrázky (spusti PO SQL 2)',
     sql: `-- Products table
+-- DROP + RECREATE aby sa predišlo konfliktom so starými schémami
+DROP TABLE IF EXISTS products CASCADE;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS products (
-  id           TEXT PRIMARY KEY,
+CREATE TABLE products (
+  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   slug         TEXT UNIQUE NOT NULL,
   name         TEXT NOT NULL,
   description  TEXT,
