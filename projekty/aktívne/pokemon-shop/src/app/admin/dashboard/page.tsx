@@ -47,15 +47,21 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const load = async () => {
-      const [buybackRes, ordersRes, usersRes] = await Promise.all([
+      const [buybackRes, ordersRes, usersRes, productsRes] = await Promise.all([
         supabase.from('buyback_submissions').select('id, status, created_at, name, email, total_items').order('created_at', { ascending: false }),
         supabase.from('orders').select('id, total, status'),
         supabase.from('profiles').select('id'),
+        supabase.from('products').select('id, stock, active').eq('active', true),
       ])
 
       const buybacks = buybackRes.data || []
       const orders = ordersRes.data || []
       const users = usersRes.data || []
+      const dbProducts = productsRes.data || []
+      setProductStats({
+        total: dbProducts.length || PRODUCTS.length,
+        stock: dbProducts.length ? dbProducts.reduce((s, p) => s + (p.stock || 0), 0) : PRODUCTS.reduce((s, p) => s + (p.stock || 0), 0),
+      })
 
       setStats({
         buyback_pending: buybacks.filter(b => b.status === 'pending').length,
@@ -71,8 +77,7 @@ export default function AdminDashboardPage() {
     load()
   }, [])
 
-  const totalProducts = PRODUCTS.length
-  const totalStock = PRODUCTS.reduce((s, p) => s + (p.stock || 0), 0)
+  const [productStats, setProductStats] = useState({ total: 0, stock: 0 })
 
   return (
     <div>
@@ -118,11 +123,11 @@ export default function AdminDashboardPage() {
                 <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', letterSpacing: '0.2em', color: 'var(--dim)', marginBottom: '12px' }}>PRODUKTY V KATALÓGU</p>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '24px' }}>
                   <div>
-                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '48px', color: 'var(--ghost)', lineHeight: 1 }}>{totalProducts}</p>
+                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '48px', color: 'var(--ghost)', lineHeight: 1 }}>{productStats.total}</p>
                     <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--dim)', letterSpacing: '0.1em' }}>produktov</p>
                   </div>
                   <div>
-                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '48px', color: totalStock < 20 ? 'var(--red)' : 'var(--ghost)', lineHeight: 1 }}>{totalStock}</p>
+                    <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '48px', color: productStats.stock < 20 ? 'var(--red)' : 'var(--ghost)', lineHeight: 1 }}>{productStats.stock}</p>
                     <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--dim)', letterSpacing: '0.1em' }}>ks skladom</p>
                   </div>
                 </div>

@@ -59,7 +59,7 @@ export default function AdminProduktyPage() {
   })
 
   const openEdit = (p: Product) => { setEditProduct({ ...p }); setIsNew(false); setError('') }
-  const openNew = () => { setEditProduct({ ...emptyProduct(), id: Date.now().toString() }); setIsNew(true); setError('') }
+  const openNew = () => { setEditProduct({ ...emptyProduct() }); setIsNew(true); setError('') }
 
   const handleImageUpload = async (file: File) => {
     if (!editProduct) return
@@ -92,8 +92,10 @@ export default function AdminProduktyPage() {
       return
     }
 
+    // Pri novom produkte vynecháme id — Supabase generuje UUID automaticky
+    const { id: _omitId, ...insertData } = editProduct as Product
     const { error: err } = isNew
-      ? await supabase.from('products').insert(editProduct)
+      ? await supabase.from('products').insert(insertData)
       : await supabase.from('products').update(editProduct).eq('id', editProduct.id!)
 
     if (err) {

@@ -16,6 +16,7 @@ export default function ProductGrid({ products, showFilters = true, initialCateg
   const [rarity, setRarity] = useState('all')
   const [sort, setSort] = useState('default')
   const [priceMax, setPriceMax] = useState(100000)
+  const [search, setSearch] = useState('')
 
   const filtered = useMemo(() => {
     let result = [...products]
@@ -25,6 +26,14 @@ export default function ProductGrid({ products, showFilters = true, initialCateg
     }
     if (rarity !== 'all') {
       result = result.filter(p => p.rarity === rarity)
+    }
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(q) ||
+        (p.set_name?.toLowerCase().includes(q)) ||
+        (p.rarity?.toLowerCase().includes(q))
+      )
     }
     result = result.filter(p => p.price <= priceMax)
 
@@ -54,11 +63,23 @@ export default function ProductGrid({ products, showFilters = true, initialCateg
       )}
 
       <div className="flex-1">
-        {/* Sort + count */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="font-mono text-xs" style={{ color: 'var(--dim)' }}>
-            {filtered.length} PRODUKTOV
-          </p>
+        {/* Search + Sort + count */}
+        <div className="flex items-center justify-between mb-6 gap-4">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <p className="font-mono text-xs" style={{ color: 'var(--dim)', whiteSpace: 'nowrap' }}>
+              {filtered.length} PRODUKTOV
+            </p>
+            <input
+              type="text"
+              placeholder="Hľadať kartu, set..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="font-mono text-xs px-3 py-2 outline-none"
+              style={{ background: 'var(--surface)', border: '1px solid var(--surface-2)', color: 'var(--ghost)', width: '200px', transition: 'border-color 0.15s' }}
+              onFocus={e => (e.target.style.borderColor = 'var(--orange)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--surface-2)')}
+            />
+          </div>
           <select
             value={sort}
             onChange={e => setSort(e.target.value)}
