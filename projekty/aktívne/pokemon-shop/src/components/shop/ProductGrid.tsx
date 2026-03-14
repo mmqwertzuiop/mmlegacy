@@ -1,5 +1,6 @@
 'use client'
 import { useState, useMemo } from 'react'
+import { motion } from 'framer-motion'
 import { Product } from '@/types'
 import ProductCard from '@/components/ui/ProductCard'
 import CategoryFilter from './CategoryFilter'
@@ -79,9 +80,18 @@ export default function ProductGrid({ products, showFilters = true, initialCateg
           </div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filtered.map(product => (
-              <ProductCard key={product.id} product={product} />
+            {filtered.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.45, delay: (index % 8) * 0.055, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <ProductCard product={product} />
+              </motion.div>
             ))}
+
           </div>
         )}
       </div>

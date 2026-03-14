@@ -244,3 +244,15 @@ body {
   from { opacity: 0; transform: translateY(30px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* Trending ticker */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* NEW badge pulse */
+@keyframes badge-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(250,93,41,0.6); }
+  50%       { box-shadow: 0 0 16px rgba(250,93,41,1), 0 0 30px rgba(250,93,41,0.4); }
+}

@@ -301,6 +301,34 @@ export default function Home() {
         }} />
       </section>
 
+      {/* ─── TRENDING TICKER ─── */}
+      <div style={{ overflow: 'hidden', background: 'var(--surface)', borderTop: '1px solid var(--surface-2)', borderBottom: '1px solid var(--surface-2)', padding: '11px 0' }}>
+        <div style={{ display: 'flex', gap: '64px', animation: 'ticker 28s linear infinite', whiteSpace: 'nowrap', width: 'max-content' }}>
+          {[
+            { name: 'Charizard ex SIR PSA 10', price: '400€+', color: 'var(--orange)' },
+            { name: 'Umbreon VMAX Alt Art PSA 10', price: '900€+', color: 'var(--gold)' },
+            { name: 'Prismatic Evolutions Booster Box', price: '179,99€', color: 'var(--green)' },
+            { name: 'Rayquaza VMAX Alt Art PSA 9', price: '550€+', color: 'var(--blue)' },
+            { name: 'Pikachu VMAX Rainbow PSA 10', price: '350€+', color: 'var(--gold)' },
+            { name: 'Giratina V Full Art', price: '149,99€', color: 'var(--purple)' },
+            { name: 'Evolving Skies Booster Box', price: '289,99€', color: 'var(--orange)' },
+            { name: 'Charizard ex SIR PSA 10', price: '400€+', color: 'var(--orange)' },
+            { name: 'Umbreon VMAX Alt Art PSA 10', price: '900€+', color: 'var(--gold)' },
+            { name: 'Prismatic Evolutions Booster Box', price: '179,99€', color: 'var(--green)' },
+            { name: 'Rayquaza VMAX Alt Art PSA 9', price: '550€+', color: 'var(--blue)' },
+            { name: 'Pikachu VMAX Rainbow PSA 10', price: '350€+', color: 'var(--gold)' },
+            { name: 'Giratina V Full Art', price: '149,99€', color: 'var(--purple)' },
+            { name: 'Evolving Skies Booster Box', price: '289,99€', color: 'var(--orange)' },
+          ].map((item, i) => (
+            <span key={i} style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.12em', color: 'var(--dim)', display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ color: item.color, fontSize: '8px' }}>▶</span>
+              <span style={{ color: 'var(--ghost)' }}>{item.name}</span>
+              <span style={{ color: item.color }}>{item.price}</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* ─── COUNTDOWN ─── */}
       <section style={{ padding: '60px 0', background: 'var(--surface)', borderTop: '1px solid var(--surface-2)', borderBottom: '1px solid var(--surface-2)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 48px', textAlign: 'center' }}>

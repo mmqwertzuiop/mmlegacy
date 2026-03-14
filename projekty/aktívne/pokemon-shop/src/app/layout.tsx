@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/ui/CustomCursor";
+import PromoBanner from "@/components/ui/PromoBanner";
 
 export const metadata: Metadata = {
   title: "MM Legacy — Prémiový Pokemon TCG Shop",
@@ -23,8 +24,9 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <CustomCursor />
+        <PromoBanner />
         <Navbar />
-        <main style={{ paddingTop: '64px' }}>
+        <main style={{ paddingTop: '104px' }}>
           {children}
         </main>
         <Footer />
