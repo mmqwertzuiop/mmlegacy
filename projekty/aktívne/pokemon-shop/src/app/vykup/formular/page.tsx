@@ -25,6 +25,7 @@ type CardItem = {
   id: string
   card_name: string
   card_set: string
+  custom_set: string
   card_condition: string
   is_graded: boolean
   psa_grade: string
@@ -36,7 +37,7 @@ type CardItem = {
 
 const emptyCard = (): CardItem => ({
   id: Math.random().toString(36).slice(2),
-  card_name: '', card_set: '', card_condition: '',
+  card_name: '', card_set: '', custom_set: '', card_condition: '',
   is_graded: false, psa_grade: '', quantity: '1',
   card_language: 'EN', expected_price: '', notes: '',
 })
@@ -69,7 +70,10 @@ export default function VykupFormularPage() {
   const editing = cards.find(c => c.id === editingId) || cards[0]
 
   const isCardValid = (c: CardItem) =>
-    c.card_name.trim() && c.card_set && c.card_condition && (c.is_graded ? c.psa_grade : true)
+    c.card_name.trim() &&
+    (c.card_set && c.card_set !== 'Iná sada' ? true : c.custom_set.trim()) &&
+    c.card_set && c.card_condition && (c.is_graded ? c.psa_grade : true) &&
+    parseInt(c.quantity) >= 1
 
   const allCardsValid = cards.every(isCardValid)
   const contactValid = contact.name.trim() && contact.email.trim()
@@ -102,7 +106,7 @@ export default function VykupFormularPage() {
     const items = cards.map(c => ({
       submission_id: sub.id,
       card_name: c.card_name.trim(),
-      card_set: c.card_set,
+      card_set: c.card_set === 'Iná sada' ? (c.custom_set.trim() || 'Iná sada') : c.card_set,
       card_condition: c.card_condition,
       is_graded: c.is_graded,
       psa_grade: c.is_graded && c.psa_grade ? parseInt(c.psa_grade) : null,
@@ -249,6 +253,19 @@ export default function VykupFormularPage() {
                           </select>
                         </div>
 
+                        {/* Custom set input when "Iná sada" is selected */}
+                        {editing.card_set === 'Iná sada' && (
+                          <div>
+                            <label style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.2em', color: 'var(--orange)', display: 'block', marginBottom: '8px' }}>ZADAJ NÁZOV SADY *</label>
+                            <input type="text" placeholder="napr. Base Set 1999, Jungle, Fossil..."
+                              value={editing.custom_set}
+                              onChange={e => updateCard(editing.id, { custom_set: e.target.value })}
+                              style={{ width: '100%', padding: '12px 16px', fontFamily: 'Inter Tight, sans-serif', fontSize: '15px', background: 'var(--surface-2)', border: '1px solid var(--orange)', color: 'var(--ghost)', outline: 'none' }}
+                              onFocus={e => (e.target.style.borderColor = 'var(--orange)')}
+                              onBlur={e => (e.target.style.borderColor = editing.custom_set ? 'var(--orange)' : 'var(--surface-2)')} />
+                          </div>
+                        )}
+
                         {/* Condition + Language */}
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                           <div>
@@ -304,8 +321,11 @@ export default function VykupFormularPage() {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                           <div>
                             <label style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.2em', color: 'var(--dim)', display: 'block', marginBottom: '8px' }}>POČET KUSOV</label>
-                            <input type="number" min="1" max="100" value={editing.quantity}
-                              onChange={e => updateCard(editing.id, { quantity: e.target.value })}
+                            <input type="number" min="1" max="9999" value={editing.quantity}
+                              onChange={e => {
+                                const val = parseInt(e.target.value)
+                                updateCard(editing.id, { quantity: (isNaN(val) || val < 1) ? '1' : e.target.value })
+                              }}
                               style={{ width: '100%', padding: '12px 16px', fontFamily: 'Space Mono, monospace', fontSize: '14px', background: 'var(--surface-2)', border: '1px solid var(--surface-2)', color: 'var(--ghost)', outline: 'none' }}
                               onFocus={e => (e.target.style.borderColor = 'var(--orange)')}
                               onBlur={e => (e.target.style.borderColor = 'var(--surface-2)')} />
