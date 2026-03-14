@@ -16,7 +16,7 @@ export default function Footer() {
 
   return (
     <footer style={{ background: 'var(--surface)', borderTop: '1px solid var(--surface-2)' }}>
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-16">
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '64px 48px' }}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
           <div className="md:col-span-1">

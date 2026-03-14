@@ -23,7 +23,7 @@ export default function ShopPage() {
           position: 'relative',
           overflow: 'hidden',
           background: '#0a0a0a',
-          padding: '5rem 2rem 4rem',
+          padding: '80px 48px 64px',
           marginBottom: '0',
         }}
       >
@@ -49,11 +49,11 @@ export default function ShopPage() {
           }}
         />
 
-        <div style={{ maxWidth: '80rem', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           {/* Label */}
           <p
             style={{
-              fontFamily: 'monospace',
+              fontFamily: 'Space Mono, monospace',
               fontSize: '0.7rem',
               letterSpacing: '0.25em',
               color: 'var(--orange)',
@@ -136,7 +136,7 @@ export default function ShopPage() {
       </div>
 
       {/* Products */}
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-16">
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '64px 48px' }}>
         <ProductGrid products={PRODUCTS} showFilters />
       </div>
     </div>

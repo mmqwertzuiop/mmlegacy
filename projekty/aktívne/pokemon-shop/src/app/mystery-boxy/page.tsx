@@ -117,7 +117,7 @@ export default function MysteryBoxyPage() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ position: 'relative', zIndex: 1, maxWidth: '860px', margin: '0 auto', padding: '0 40px' }}
+          style={{ position: 'relative', zIndex: 1, maxWidth: '860px', margin: '0 auto', padding: '0 48px' }}
         >
           <p style={{ fontFamily: S.mono, fontSize: '10px', letterSpacing: '0.45em', color: 'var(--purple)', marginBottom: '20px', textTransform: 'uppercase' }}>
             GAMIFIED UNBOXING EXPERIENCE
@@ -162,7 +162,7 @@ export default function MysteryBoxyPage() {
 
       {/* ── TIERS ── */}
       <section style={{ padding: '80px 0' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 40px' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 48px' }}>
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <p style={{ fontFamily: S.mono, fontSize: '10px', letterSpacing: '0.4em', color: 'var(--purple)', marginBottom: '12px', textTransform: 'uppercase' }}>5 TIEROV</p>
             <h2 style={{ fontFamily: S.display, fontSize: 'clamp(56px, 7vw, 96px)', color: 'var(--ghost)', lineHeight: 1 }}>VYBER SI TIER</h2>
@@ -303,7 +303,7 @@ export default function MysteryBoxyPage() {
 
       {/* ── PREVIOUS OPENS ── */}
       <section style={{ padding: '80px 0', background: 'var(--surface)', borderTop: '1px solid var(--surface-2)' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 40px' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 48px' }}>
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
             <p style={{ fontFamily: S.mono, fontSize: '10px', letterSpacing: '0.3em', color: 'var(--purple)', marginBottom: '10px', textTransform: 'uppercase' }}>PREDOŠLÉ OTVÁRANIA</p>
             <h2 style={{ fontFamily: S.display, fontSize: 'clamp(40px, 5vw, 64px)', color: 'var(--ghost)', lineHeight: 1 }}>ČO DOSTALI INÍ</h2>
