@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useCartStore } from '@/lib/cart'
 
 const navLinks = [
+  { href: '/', label: 'HOME' },
   { href: '/shop/booster-boxy', label: 'BOOSTER BOXY' },
   { href: '/shop/graded', label: 'PSA GRADED' },
   { href: '/shop/singles', label: 'SINGLES' },

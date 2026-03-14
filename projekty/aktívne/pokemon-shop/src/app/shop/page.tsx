@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
-import { PRODUCTS } from '@/data/products'
+import { getProducts } from '@/lib/products-db'
 import ProductGrid from '@/components/shop/ProductGrid'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Shop — MM Legacy',
@@ -14,7 +16,9 @@ const CATEGORIES = [
   { label: 'MYSTERY BOXY', href: '/mystery-boxy', icon: '▸' },
 ]
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const products = await getProducts()
+
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
 
@@ -90,7 +94,7 @@ export default function ShopPage() {
               letterSpacing: '0.05em',
             }}
           >
-            {PRODUCTS.length} produktov — booster boxy, PSA graded, singles, mystery boxy
+            {products.length} produktov — booster boxy, PSA graded, singles, mystery boxy
           </p>
 
           {/* Category boxes */}
@@ -138,7 +142,7 @@ export default function ShopPage() {
 
       {/* Products */}
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '64px 48px' }}>
-        <ProductGrid products={PRODUCTS} showFilters />
+        <ProductGrid products={products} showFilters />
       </div>
     </div>
   )

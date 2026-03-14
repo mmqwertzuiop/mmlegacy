@@ -12,7 +12,9 @@ export interface Product {
   psa_grade?: number
   is_mystery_box?: boolean
   mystery_tier?: string
+  active?: boolean
   created_at?: string
+  updated_at?: string
 }
 
 export interface MysteryBoxTier {

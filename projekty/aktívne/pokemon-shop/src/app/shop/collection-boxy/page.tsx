@@ -1,15 +1,17 @@
 import { Metadata } from 'next'
-import { PRODUCTS } from '@/data/products'
+import { getProductsByCategory } from '@/lib/products-db'
 import ProductGrid from '@/components/shop/ProductGrid'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Collection Boxy — MM Legacy',
   description: 'Elite Trainer Boxy a Collection Boxy — prémiový zberateľský balíček.',
 }
 
-const products = PRODUCTS.filter(p => p.category === 'collection-box')
+export default async function CollectionBoxyPage() {
+  const products = await getProductsByCategory('collection-box')
 
-export default function CollectionBoxyPage() {
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-16">

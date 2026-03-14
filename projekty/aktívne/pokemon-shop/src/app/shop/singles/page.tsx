@@ -1,15 +1,17 @@
 import { Metadata } from 'next'
-import { PRODUCTS } from '@/data/products'
+import { getProductsByCategory } from '@/lib/products-db'
 import ProductGrid from '@/components/shop/ProductGrid'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Single Karty — MM Legacy',
   description: 'Rare & Ultra Rare single karty — bez náhody, konkrétna karta hneď.',
 }
 
-const products = PRODUCTS.filter(p => p.category === 'singles')
+export default async function SinglesPage() {
+  const products = await getProductsByCategory('singles')
 
-export default function SinglesPage() {
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-16">

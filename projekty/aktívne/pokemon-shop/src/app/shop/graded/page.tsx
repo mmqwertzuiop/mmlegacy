@@ -1,15 +1,17 @@
 import { Metadata } from 'next'
-import { PRODUCTS } from '@/data/products'
+import { getProductsByCategory } from '@/lib/products-db'
 import ProductGrid from '@/components/shop/ProductGrid'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'PSA Graded Karty — MM Legacy',
   description: 'PSA certifikované graded Pokemon karty — vrchol každej zbierky.',
 }
 
-const products = PRODUCTS.filter(p => p.category === 'psa-graded')
+export default async function GradedPage() {
+  const products = await getProductsByCategory('psa-graded')
 
-export default function GradedPage() {
   return (
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-16">
