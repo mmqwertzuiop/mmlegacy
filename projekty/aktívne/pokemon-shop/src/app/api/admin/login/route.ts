@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
   const res = NextResponse.json({ ok: true })
   res.cookies.set('admin-token', secret, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: false,
+    sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 7, // 7 dní
     path: '/',
   })
