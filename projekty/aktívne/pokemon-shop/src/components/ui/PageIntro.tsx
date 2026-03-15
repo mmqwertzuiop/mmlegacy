@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import MysteryBox3D from './MysteryBox3D'
+import Image from 'next/image'
 
 export type PageIntroType = 'mystery' | 'psa' | 'booster' | 'singles' | 'collection' | 'vykup' | 'shop'
 
@@ -11,208 +11,301 @@ interface Props {
   subtitle?: string
 }
 
-// ─── Deterministic particles ───────────────────────────────
-const PARTICLES = Array.from({ length: 28 }, (_, i) => ({
-  x:     (i * 127 % 100),
-  delay: (i * 0.37) % 4,
-  dur:   3.5 + (i * 1.1) % 4,
-  size:  i % 5 === 0 ? 3 : 2,
-  orange: i % 3 !== 0,
+// ─── Real card images ───────────────────────────────────────
+const IMG = {
+  charizard: 'https://images.pokemontcg.io/sv3pt5/199_hires.png',
+  umbreon:   'https://images.pokemontcg.io/swsh7/215_hires.png',
+  pikachu:   'https://images.pokemontcg.io/swsh4/188_hires.png',
+  rayquaza:  'https://images.pokemontcg.io/swsh7/218_hires.png',
+  giratina:  'https://images.pokemontcg.io/swsh12/186_hires.png',
+  koraidon:  'https://images.pokemontcg.io/sv1/252_hires.png',
+}
+
+// Deterministic particles
+const BURST_P = Array.from({ length: 28 }, (_, i) => ({
+  angle: (i / 28) * Math.PI * 2 + (i % 3) * 0.22,
+  dist:  90 + (i * 17 % 80),
+  size:  i % 5 === 0 ? 7 : i % 3 === 0 ? 5 : 3,
+  dur:   0.55 + (i * 41 % 100) / 220,
+  delay: 0.04 + (i * 31 % 28) / 160,
+  purple: i % 3 !== 0,
 }))
 
-const CARD_FAN = [
-  { x: -260, y: -55, r: -34, d: 0.0 },
-  { x: -140, y: -155, r: -18, d: 0.07 },
-  { x:    0, y: -185, r:   0, d: 0.14 },
-  { x:  140, y: -155, r:  18, d: 0.07 },
-  { x:  260, y: -55,  r:  34, d: 0.0 },
+// ─────────────────────────────────────────────────────────────
+// MYSTERY — 5 real cards explode from a glowing centre
+// ─────────────────────────────────────────────────────────────
+const MYSTERY_CARDS = [
+  { img: IMG.charizard, x: -268, y: -18,  r: -26, s: 0.92, z: 2, delay: 0.00 },
+  { img: IMG.umbreon,   x: -138, y: -158, r: -12, s: 1.00, z: 3, delay: 0.06 },
+  { img: IMG.rayquaza,  x:    0, y: -178, r:   0, s: 1.10, z: 5, delay: 0.12 },
+  { img: IMG.pikachu,   x:  138, y: -158, r:  12, s: 1.00, z: 3, delay: 0.06 },
+  { img: IMG.giratina,  x:  268, y: -18,  r:  26, s: 0.92, z: 2, delay: 0.00 },
 ]
 
-// ─────────────────────────────────────────────────────────────
-// MYSTERY — 3D box auto-opens
-// ─────────────────────────────────────────────────────────────
-function MysteryAnim({ active }: { active: boolean }) {
+function MysteryIntro({ active }: { active: boolean }) {
   return (
-    <div style={{
-      transform: 'scale(1.75)',
-      transformOrigin: 'center center',
-      width: 200, height: 210,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}>
-      <MysteryBox3D tier="Gold" interactive={false} autoOpen={active} />
+    <div style={{ position: 'relative', width: 680, height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Central glow burst */}
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={active ? { scale: [0, 4, 1.8], opacity: [0, 1, 0] } : {}}
+        transition={{ duration: 0.9, delay: 0.05, ease: 'easeOut' }}
+        style={{
+          position: 'absolute', width: 180, height: 180, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(139,92,246,0.9) 0%, rgba(250,93,41,0.5) 45%, transparent 70%)',
+          filter: 'blur(22px)', zIndex: 1, pointerEvents: 'none',
+        }}
+      />
+
+      {/* Cards flying from center */}
+      {MYSTERY_CARDS.map((c, i) => (
+        <motion.div
+          key={i}
+          initial={{ x: 0, y: 0, rotate: 0, scale: 0, opacity: 0 }}
+          animate={active ? { x: c.x, y: c.y, rotate: c.r, scale: c.s, opacity: 1 } : {}}
+          transition={{ type: 'spring', stiffness: 62, damping: 12, delay: 0.18 + c.delay }}
+          style={{ position: 'absolute', width: 112, height: 157, zIndex: c.z }}
+        >
+          <div style={{
+            width: '100%', height: '100%', position: 'relative', overflow: 'hidden',
+            transform: `perspective(700px) rotateY(${(i - 2) * 5}deg) rotateX(-4deg)`,
+            boxShadow: `0 22px 55px rgba(0,0,0,0.85), 0 0 22px rgba(139,92,246,0.35)`,
+            border: '1px solid rgba(139,92,246,0.4)',
+          }}>
+            <Image src={c.img} alt="" fill style={{ objectFit: 'cover' }} sizes="112px" priority={i === 2} />
+            {/* Holographic shimmer on each card */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(115deg, transparent 0%, rgba(255,200,100,0.28) 32%, rgba(100,200,255,0.28) 62%, transparent 100%)',
+              backgroundSize: '200% 200%',
+              animation: `holo ${2.4 + i * 0.35}s linear infinite`,
+              mixBlendMode: 'color-dodge', pointerEvents: 'none',
+            }} />
+          </div>
+        </motion.div>
+      ))}
+
+      {/* Particle burst */}
+      <AnimatePresence>
+        {active && BURST_P.map((p, i) => (
+          <motion.div
+            key={i}
+            initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
+            animate={{ x: Math.cos(p.angle) * p.dist, y: Math.sin(p.angle) * p.dist, scale: 1, opacity: 0 }}
+            transition={{ duration: p.dur, ease: 'easeOut', delay: p.delay }}
+            style={{
+              position: 'absolute', width: p.size, height: p.size, borderRadius: '50%',
+              background: p.purple ? '#8B5CF6' : '#FA5D29',
+              boxShadow: `0 0 ${p.size * 2}px ${p.purple ? 'rgba(139,92,246,0.9)' : 'rgba(250,93,41,0.9)'}`,
+              pointerEvents: 'none', zIndex: 10,
+            }}
+          />
+        ))}
+      </AnimatePresence>
     </div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────
-// PSA GRADED — slab slides up, grade pops, rainbow glow
+// PSA GRADED — real Charizard card in PSA slab, grade pops
 // ─────────────────────────────────────────────────────────────
-function PsaAnim({ active }: { active: boolean }) {
+function PsaIntro({ active }: { active: boolean }) {
   return (
     <motion.div
-      initial={{ y: 90, scale: 0.75 }}
-      animate={{ y: active ? 0 : 90, scale: active ? 1 : 0.75 }}
-      transition={{ type: 'spring', stiffness: 62, damping: 13, delay: 0.2 }}
-      style={{ perspective: '700px' }}
+      initial={{ y: 110, rotateX: 28, scale: 0.72 }}
+      animate={{ y: active ? 0 : 110, rotateX: active ? 0 : 28, scale: active ? 1 : 0.72 }}
+      transition={{ type: 'spring', stiffness: 58, damping: 13, delay: 0.22 }}
+      style={{ perspective: '700px', perspectiveOrigin: '50% 60%' }}
     >
+      {/* PSA Slab */}
       <div style={{
-        width: 230, padding: '20px 18px 18px',
-        background: 'linear-gradient(160deg, #1c1c1c 0%, #111 100%)',
-        border: '2px solid #F59E0B',
-        boxShadow: '0 0 60px rgba(245,158,11,0.65), 0 0 120px rgba(245,158,11,0.3), 0 40px 80px rgba(0,0,0,0.8)',
+        width: 264,
+        background: 'linear-gradient(162deg, #1e1e1e 0%, #111 100%)',
+        border: '2.5px solid #F59E0B',
+        boxShadow: '0 0 80px rgba(245,158,11,0.65), 0 0 160px rgba(245,158,11,0.22), 0 40px 100px rgba(0,0,0,0.9)',
         animation: 'rainbow-border 3.5s linear infinite',
+        padding: '14px 12px 16px',
         textAlign: 'center' as const,
       }}>
-        <p style={{ fontFamily: 'Space Mono, monospace', fontSize: 7, letterSpacing: '0.38em', color: '#555', margin: '0 0 10px' }}>
-          PROFESSIONAL SPORTS AUTHENTICATOR
+        {/* Header */}
+        <p style={{ fontFamily: 'Space Mono, monospace', fontSize: 6.5, letterSpacing: '0.36em', color: '#555', margin: '0 0 10px', textTransform: 'uppercase' as const }}>
+          Professional Sports Authenticator
         </p>
-        <motion.span
+
+        {/* Card image */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: active ? 1 : 0, scale: active ? 1 : 0.85 }}
+          transition={{ duration: 0.55, delay: 0.45 }}
+          style={{ position: 'relative', width: '100%', aspectRatio: '3/4', overflow: 'hidden', marginBottom: 10 }}
+        >
+          <Image src={IMG.charizard} alt="Charizard ex PSA 10" fill style={{ objectFit: 'cover' }} sizes="240px" priority />
+          {/* Holographic sweep */}
+          <motion.div
+            initial={{ x: '-120%' }}
+            animate={{ x: active ? '280%' : '-120%' }}
+            transition={{ duration: 1.1, delay: 0.95, ease: 'easeInOut' }}
+            style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(108deg, transparent 28%, rgba(255,255,255,0.62) 45%, rgba(255,220,80,0.5) 52%, rgba(80,200,255,0.4) 60%, transparent 75%)',
+              pointerEvents: 'none',
+            }}
+          />
+          {/* Inner frame */}
+          <div style={{ position: 'absolute', inset: 2, border: '1px solid rgba(245,158,11,0.35)', pointerEvents: 'none' }} />
+        </motion.div>
+
+        {/* Grade badge */}
+        <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: active ? 1 : 0, opacity: active ? 1 : 0 }}
-          transition={{ type: 'spring', stiffness: 280, damping: 18, delay: 0.65 }}
-          style={{
-            display: 'block',
-            fontFamily: 'Bebas Neue, sans-serif',
-            fontSize: 124, lineHeight: 1,
-            color: '#F59E0B',
-            textShadow: '0 0 60px rgba(245,158,11,0.9)',
-            marginBottom: 6,
-          }}
-        >10</motion.span>
-        <p style={{ fontFamily: 'Space Mono, monospace', fontSize: 8, letterSpacing: '0.28em', color: '#F59E0B', margin: 0, opacity: 0.7 }}>
-          GEM MINT
-        </p>
+          transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.72 }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+        >
+          <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 62, lineHeight: 1, color: '#F59E0B', textShadow: '0 0 40px rgba(245,158,11,0.9)' }}>10</span>
+          <div style={{ textAlign: 'left' as const }}>
+            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 7, letterSpacing: '0.28em', color: '#F59E0B', opacity: 0.75 }}>GEM MINT</div>
+            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 7, letterSpacing: '0.18em', color: '#888' }}>CHARIZARD EX SIR</div>
+          </div>
+        </motion.div>
       </div>
     </motion.div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────
-// BOOSTER — pack shakes, 5 cards explode out
+// BOOSTER — pack shakes, real cards burst out in fan
 // ─────────────────────────────────────────────────────────────
-function BoosterAnim({ active }: { active: boolean }) {
+const BOOSTER_CARDS = [
+  { img: IMG.koraidon,  x: -275, y: -38,  r: -35, delay: 0.00 },
+  { img: IMG.pikachu,   x: -138, y: -162, r: -16, delay: 0.07 },
+  { img: IMG.rayquaza,  x:    0, y: -184, r:   0, delay: 0.14 },
+  { img: IMG.umbreon,   x:  138, y: -162, r:  16, delay: 0.07 },
+  { img: IMG.giratina,  x:  275, y: -38,  r:  35, delay: 0.00 },
+]
+
+function BoosterIntro({ active }: { active: boolean }) {
   return (
-    <div style={{ position: 'relative', width: 380, height: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      {/* Fan cards — appear after pack shakes */}
-      {CARD_FAN.map((c, i) => (
+    <div style={{ position: 'relative', width: 680, height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Fan cards */}
+      {BOOSTER_CARDS.map((c, i) => (
         <motion.div
           key={i}
-          initial={{ x: 0, y: 0, rotate: 0, opacity: 0, scale: 0.2 }}
-          animate={active ? { x: c.x, y: c.y, rotate: c.r, opacity: 0.82, scale: 1 } : {}}
-          transition={{ type: 'spring', stiffness: 72, damping: 11, delay: 0.55 + c.d }}
+          initial={{ x: 0, y: 50, rotate: 0, scale: 0, opacity: 0 }}
+          animate={active ? { x: c.x, y: c.y, rotate: c.r, scale: 1, opacity: 1 } : {}}
+          transition={{ type: 'spring', stiffness: 65, damping: 12, delay: 0.52 + c.delay }}
           style={{
             position: 'absolute',
-            width: 58, height: 82,
-            background: 'linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%)',
-            border: '1px solid rgba(250,93,41,0.5)',
-            boxShadow: '0 10px 35px rgba(0,0,0,0.7)',
-            overflow: 'hidden',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 108, height: 151,
+            transformOrigin: 'center bottom',
           }}
         >
-          <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 24, color: 'rgba(250,93,41,0.5)' }}>?</span>
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(250,93,41,0.14) 0%, transparent 50%, rgba(245,158,11,0.09) 100%)' }} />
+          <div style={{
+            width: '100%', height: '100%', position: 'relative', overflow: 'hidden',
+            boxShadow: '0 20px 55px rgba(0,0,0,0.85)',
+            border: '1px solid rgba(250,93,41,0.35)',
+          }}>
+            <Image src={c.img} alt="" fill style={{ objectFit: 'cover' }} sizes="110px" />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'linear-gradient(115deg, transparent 0%, rgba(255,180,80,0.22) 30%, rgba(100,200,255,0.22) 60%, transparent 100%)',
+              backgroundSize: '200% 200%',
+              animation: `holo ${2.2 + i * 0.3}s linear infinite`,
+              mixBlendMode: 'color-dodge', pointerEvents: 'none',
+            }} />
+          </div>
         </motion.div>
       ))}
 
-      {/* Main pack */}
+      {/* Booster pack centre */}
       <motion.div
-        animate={active ? {
-          x: [0, -10, 10, -7, 7, -4, 0],
-          y: [0, -3, 3, -2, 2, 0],
-        } : {}}
-        transition={{ duration: 0.55, ease: 'easeInOut', delay: 0.3 }}
+        animate={active ? { x: [0, -9, 9, -6, 6, -3, 0], y: [0, -2, 2, -1, 1, 0] } : {}}
+        transition={{ duration: 0.5, delay: 0.28, ease: 'easeInOut' }}
         style={{
-          width: 160, height: 236,
-          background: 'linear-gradient(155deg, #1a0d00 0%, #0d0800 60%, #1a1000 100%)',
-          border: '1px solid rgba(250,93,41,0.45)',
-          position: 'relative', zIndex: 5, overflow: 'hidden',
-          boxShadow: '0 0 40px rgba(250,93,41,0.2), 0 20px 60px rgba(0,0,0,0.7)',
+          width: 148, height: 220, position: 'relative', zIndex: 20,
+          background: 'linear-gradient(155deg, #1a0d00 0%, #0e0800 55%, #180f00 100%)',
+          border: '1px solid rgba(250,93,41,0.5)',
+          overflow: 'hidden',
+          boxShadow: '0 0 45px rgba(250,93,41,0.25), 0 20px 65px rgba(0,0,0,0.85)',
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(155deg, rgba(250,93,41,0.22) 0%, transparent 45%, rgba(245,158,11,0.12) 100%)' }} />
-        {/* Foil lines */}
-        {[20, 40, 60, 80].map(p => (
-          <div key={p} style={{ position: 'absolute', top: `${p}%`, left: 0, right: 0, height: '1px', background: `rgba(250,93,41,${0.08 + p * 0.001})`, transform: `rotate(${-3 + p * 0.02}deg)` }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(155deg, rgba(250,93,41,0.24) 0%, transparent 45%, rgba(245,158,11,0.14) 100%)' }} />
+        {[20, 40, 58, 76].map(p => (
+          <div key={p} style={{ position: 'absolute', left: 0, right: 0, top: `${p}%`, height: 1, background: `rgba(250,93,41,${0.07 + p * 0.001})`, transform: `rotate(${-2.5 + p * 0.02}deg)` }} />
         ))}
-        {/* Diagonal tear line */}
-        <div style={{ position: 'absolute', top: '22%', left: '-5%', right: '-5%', height: '1px', background: 'rgba(255,255,255,0.18)', transform: 'rotate(-2.5deg)' }} />
-        <div style={{ position: 'absolute', bottom: 14, left: 0, right: 0, textAlign: 'center', fontFamily: 'Space Mono, monospace', fontSize: 8, letterSpacing: '0.28em', color: 'rgba(250,93,41,0.6)' }}>
+        <div style={{ position: 'absolute', top: '21%', left: '-4%', right: '-4%', height: 1, background: 'rgba(255,255,255,0.2)', transform: 'rotate(-2.5deg)' }} />
+        {/* Shine sweep */}
+        <motion.div
+          initial={{ x: '-130%' }}
+          animate={active ? { x: '240%' } : {}}
+          transition={{ duration: 0.65, delay: 0.26 }}
+          style={{ position: 'absolute', inset: 0, background: 'linear-gradient(108deg, transparent 35%, rgba(255,255,255,0.22) 50%, transparent 65%)', pointerEvents: 'none' }}
+        />
+        <div style={{ position: 'absolute', bottom: 12, left: 0, right: 0, textAlign: 'center' as const, fontFamily: 'Space Mono, monospace', fontSize: 7, letterSpacing: '0.3em', color: 'rgba(250,93,41,0.65)' }}>
           POKEMON TCG
         </div>
-        {/* Shine */}
-        <motion.div
-          initial={{ x: '-120%' }}
-          animate={active ? { x: '220%' } : {}}
-          transition={{ duration: 0.7, delay: 0.28 }}
-          style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.18) 50%, transparent 65%)', pointerEvents: 'none' }}
-        />
       </motion.div>
     </div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────
-// SINGLES — card flips face-up with rainbow holographic sweep
+// SINGLES — Umbreon VMAX flips from MM-branded back to front
 // ─────────────────────────────────────────────────────────────
-function SinglesAnim({ active }: { active: boolean }) {
+function SinglesIntro({ active }: { active: boolean }) {
   return (
-    <div style={{ perspective: '900px', perspectiveOrigin: '50% 50%' }}>
+    <div style={{ perspective: '900px', perspectiveOrigin: '50% 45%' }}>
       <motion.div
-        initial={{ rotateY: 180, scale: 0.7 }}
-        animate={{ rotateY: active ? 0 : 180, scale: active ? 1 : 0.7 }}
-        transition={{ type: 'spring', stiffness: 50, damping: 10, delay: 0.28 }}
-        style={{ transformStyle: 'preserve-3d', position: 'relative', width: 220, height: 308 }}
+        initial={{ rotateY: 180, scale: 0.68, y: 30 }}
+        animate={{ rotateY: active ? 0 : 180, scale: active ? 1 : 0.68, y: active ? 0 : 30 }}
+        transition={{ type: 'spring', stiffness: 48, damping: 10, delay: 0.3 }}
+        style={{ transformStyle: 'preserve-3d', position: 'relative', width: 250, height: 350 }}
       >
-        {/* BACK */}
+        {/* BACK — MM Legacy branded */}
         <div style={{
           position: 'absolute', inset: 0,
           backfaceVisibility: 'hidden',
-          background: 'linear-gradient(135deg, #111 0%, #1a0800 100%)',
-          border: '1px solid rgba(250,93,41,0.4)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.8)',
+          background: 'linear-gradient(135deg, #0d0d0d 0%, #1a0900 50%, #0d0d0d 100%)',
+          border: '1.5px solid rgba(250,93,41,0.4)',
+          boxShadow: '0 25px 65px rgba(0,0,0,0.9)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
+          overflow: 'hidden',
         }}>
-          <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 56, color: 'rgba(250,93,41,0.3)', letterSpacing: '0.08em' }}>MM</span>
+          {/* Pattern grid */}
+          <div style={{
+            position: 'absolute', inset: 0, opacity: 0.06,
+            backgroundImage: 'repeating-linear-gradient(0deg, rgba(250,93,41,1) 0px, transparent 2px, transparent 28px), repeating-linear-gradient(90deg, rgba(250,93,41,1) 0px, transparent 2px, transparent 28px)',
+          }} />
+          <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 64, color: 'rgba(250,93,41,0.32)', letterSpacing: '0.06em', zIndex: 1 }}>MM</div>
+          <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 8, letterSpacing: '0.42em', color: 'rgba(250,93,41,0.22)', zIndex: 1 }}>LEGACY</div>
+          {/* Border ornament */}
+          <div style={{ position: 'absolute', inset: 8, border: '1px solid rgba(250,93,41,0.15)' }} />
+          <div style={{ position: 'absolute', inset: 14, border: '1px solid rgba(250,93,41,0.08)' }} />
         </div>
 
-        {/* FRONT — holographic surface */}
+        {/* FRONT — real Umbreon VMAX Alt Art */}
         <div style={{
           position: 'absolute', inset: 0,
           backfaceVisibility: 'hidden',
           transform: 'rotateY(180deg)',
           overflow: 'hidden',
-          border: '1.5px solid rgba(250,93,41,0.6)',
-          boxShadow: '0 0 50px rgba(250,93,41,0.4), 0 30px 80px rgba(0,0,0,0.8)',
-          background: 'linear-gradient(135deg, #0a0a1a 0%, #1a0a05 50%, #0a1a0a 100%)',
+          border: '1.5px solid rgba(59,130,246,0.6)',
+          boxShadow: '0 0 55px rgba(59,130,246,0.5), 0 0 100px rgba(59,130,246,0.2), 0 30px 80px rgba(0,0,0,0.9)',
         }}>
-          {/* Holographic grid pattern */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: 'repeating-linear-gradient(0deg, rgba(250,93,41,0.04) 0px, transparent 2px, transparent 30px), repeating-linear-gradient(90deg, rgba(250,93,41,0.04) 0px, transparent 2px, transparent 30px)',
-          }} />
-          {/* Center logo */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-            <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 48, color: 'rgba(245,158,11,0.55)', letterSpacing: '0.1em', lineHeight: 1 }}>MM</div>
-            <div style={{ fontFamily: 'Space Mono, monospace', fontSize: 7, letterSpacing: '0.35em', color: 'rgba(250,93,41,0.4)', marginTop: 5 }}>LEGACY</div>
-          </div>
-          {/* Corner stars */}
-          {[[8,8],[8,92],[92,8],[92,92]].map(([t,l], i) => (
-            <span key={i} style={{ position: 'absolute', top: `${t}%`, left: `${l}%`, transform: 'translate(-50%,-50%)', fontSize: 10, color: 'rgba(245,158,11,0.35)' }}>✦</span>
-          ))}
-          {/* Rainbow holographic sweep */}
+          <Image src={IMG.umbreon} alt="Umbreon VMAX Alt Art" fill style={{ objectFit: 'cover' }} sizes="250px" priority />
+          {/* Rainbow holographic sweep on reveal */}
           <motion.div
             initial={{ x: '-120%' }}
-            animate={active ? { x: '280%' } : {}}
-            transition={{ duration: 1.3, delay: 1.0, ease: 'easeInOut' }}
+            animate={{ x: active ? '300%' : '-120%' }}
+            transition={{ duration: 1.3, delay: 1.05, ease: 'easeInOut' }}
             style={{
               position: 'absolute', inset: 0,
-              background: 'linear-gradient(108deg, transparent 25%, rgba(255,220,80,0.72) 40%, rgba(80,200,255,0.6) 50%, rgba(220,80,255,0.55) 60%, rgba(80,255,160,0.45) 70%, transparent 80%)',
+              background: 'linear-gradient(108deg, transparent 22%, rgba(255,220,80,0.75) 38%, rgba(80,200,255,0.65) 50%, rgba(220,80,255,0.6) 62%, rgba(80,255,160,0.5) 72%, transparent 82%)',
               pointerEvents: 'none',
             }}
           />
-          {/* Edge glow */}
-          <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 40px rgba(250,93,41,0.2)', pointerEvents: 'none' }} />
+          {/* Soft vignette */}
+          <div style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 50px rgba(59,130,246,0.25)', pointerEvents: 'none' }} />
         </div>
       </motion.div>
     </div>
@@ -220,171 +313,174 @@ function SinglesAnim({ active }: { active: boolean }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// VYKUP — coins rain down, "VÝKUP" glows
+// VYKUP — card slides in, gold coins cascade, value shows
 // ─────────────────────────────────────────────────────────────
-const COINS = Array.from({ length: 12 }, (_, i) => ({
-  x: 10 + (i * 137 % 80),
-  delay: (i * 0.19) % 1.2,
-  dur: 0.8 + (i * 0.11) % 0.5,
-  size: i % 3 === 0 ? 22 : 16,
+const COINS_V = Array.from({ length: 14 }, (_, i) => ({
+  left: 8 + (i * 131 % 84),
+  delay: (i * 0.18) % 1.4,
+  dur: 0.75 + (i * 0.09) % 0.45,
+  size: i % 3 === 0 ? 22 : i % 2 === 0 ? 16 : 12,
 }))
 
-function VykupAnim({ active }: { active: boolean }) {
+function VykupIntro({ active }: { active: boolean }) {
   return (
-    <div style={{ position: 'relative', width: 280, height: 240, overflow: 'hidden' }}>
+    <div style={{ position: 'relative', width: 480, height: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {/* Coins raining */}
-      {COINS.map((c, i) => (
+      {COINS_V.map((c, i) => (
         <motion.div
           key={i}
-          initial={{ y: -40, opacity: 0, rotate: 0 }}
-          animate={active ? { y: [-40, 260], opacity: [0, 1, 1, 0], rotate: [0, 360] } : {}}
-          transition={{ duration: c.dur + 0.6, delay: c.delay, ease: 'easeIn', repeat: active ? 3 : 0, repeatDelay: 0.3 }}
+          initial={{ y: -50, x: 0, opacity: 0, rotate: 0 }}
+          animate={active ? { y: 340, opacity: [0, 1, 1, 0], rotate: 360 } : {}}
+          transition={{ duration: c.dur + 0.5, delay: c.delay, ease: 'easeIn', repeat: 2, repeatDelay: 0.2 }}
           style={{
-            position: 'absolute',
-            left: `${c.x}%`, top: 0,
-            width: c.size, height: c.size,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle at 35% 35%, #FFE55C, #F59E0B 50%, #B8720A)',
+            position: 'absolute', top: 0, left: `${c.left}%`,
+            width: c.size, height: c.size, borderRadius: '50%',
+            background: 'radial-gradient(circle at 35% 35%, #FFE86A, #F59E0B 55%, #A06400)',
             boxShadow: '0 0 10px rgba(245,158,11,0.8)',
           }}
         />
       ))}
-      {/* Central diamond/checkmark */}
+
+      {/* Koraidon card (value card) sliding in */}
       <motion.div
-        initial={{ scale: 0, rotate: -45 }}
+        initial={{ x: -180, rotate: -15, opacity: 0 }}
+        animate={active ? { x: -85, rotate: -8, opacity: 1 } : {}}
+        transition={{ type: 'spring', stiffness: 70, damping: 14, delay: 0.3 }}
+        style={{ position: 'absolute', width: 110, height: 154, zIndex: 5 }}
+      >
+        <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.8)', border: '1px solid rgba(245,158,11,0.4)' }}>
+          <Image src={IMG.koraidon} alt="" fill style={{ objectFit: 'cover' }} sizes="110px" />
+        </div>
+      </motion.div>
+
+      {/* Arrow */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0 }}
+        animate={active ? { opacity: 1, scale: 1 } : {}}
+        transition={{ delay: 0.7, type: 'spring', stiffness: 200, damping: 16 }}
+        style={{ position: 'relative', zIndex: 10, fontFamily: 'Bebas Neue, sans-serif', fontSize: 40, color: '#F59E0B', textShadow: '0 0 20px rgba(245,158,11,0.7)' }}
+      >
+        →
+      </motion.div>
+
+      {/* Gold diamond/€ */}
+      <motion.div
+        initial={{ scale: 0, rotate: 45 }}
         animate={active ? { scale: 1, rotate: 0 } : {}}
-        transition={{ type: 'spring', stiffness: 120, damping: 14, delay: 0.4 }}
+        transition={{ type: 'spring', stiffness: 120, damping: 13, delay: 0.5 }}
         style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          width: 100, height: 100,
-          background: 'linear-gradient(135deg, #FFD700, #F59E0B)',
+          position: 'relative', zIndex: 10,
+          width: 90, height: 90,
+          background: 'linear-gradient(135deg, #FFE86A 0%, #F59E0B 55%, #A06400 100%)',
           clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
-          boxShadow: '0 0 60px rgba(245,158,11,0.8)',
+          boxShadow: '0 0 60px rgba(245,158,11,0.85)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 10,
+          marginLeft: 16,
         }}
       >
-        <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 32, color: '#000', marginTop: 4 }}>€</span>
+        <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 34, color: '#000', marginTop: 2 }}>€</span>
       </motion.div>
     </div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────
-// CONFIG per type
+// CONFIG
 // ─────────────────────────────────────────────────────────────
-const CONFIG: Record<PageIntroType, { glow: string; accent: string; particleColor: string }> = {
-  mystery:    { glow: 'rgba(139,92,246,0.18)', accent: '#8B5CF6', particleColor: '#8B5CF6' },
-  psa:        { glow: 'rgba(245,158,11,0.16)', accent: '#F59E0B', particleColor: '#F59E0B' },
-  booster:    { glow: 'rgba(250,93,41,0.16)',  accent: '#FA5D29', particleColor: '#FA5D29' },
-  singles:    { glow: 'rgba(59,130,246,0.15)', accent: '#3B82F6', particleColor: '#3B82F6' },
-  collection: { glow: 'rgba(245,158,11,0.16)', accent: '#F59E0B', particleColor: '#F59E0B' },
-  vykup:      { glow: 'rgba(245,158,11,0.18)', accent: '#F59E0B', particleColor: '#F59E0B' },
-  shop:       { glow: 'rgba(250,93,41,0.14)',  accent: '#FA5D29', particleColor: '#FA5D29' },
+const CFG: Record<PageIntroType, { bg: string; accent: string; pt: string }> = {
+  mystery:    { bg: 'rgba(139,92,246,0.16)', accent: '#8B5CF6', pt: '#8B5CF6' },
+  psa:        { bg: 'rgba(245,158,11,0.15)', accent: '#F59E0B', pt: '#F59E0B' },
+  booster:    { bg: 'rgba(250,93,41,0.15)',  accent: '#FA5D29', pt: '#FA5D29' },
+  singles:    { bg: 'rgba(59,130,246,0.14)', accent: '#3B82F6', pt: '#3B82F6' },
+  collection: { bg: 'rgba(245,158,11,0.14)', accent: '#F59E0B', pt: '#F59E0B' },
+  vykup:      { bg: 'rgba(245,158,11,0.16)', accent: '#F59E0B', pt: '#F59E0B' },
+  shop:       { bg: 'rgba(250,93,41,0.13)',  accent: '#FA5D29', pt: '#FA5D29' },
 }
 
 // ─────────────────────────────────────────────────────────────
-// MAIN EXPORT
+// MAIN
 // ─────────────────────────────────────────────────────────────
 export default function PageIntro({ type, title, subtitle }: Props) {
   const [phase, setPhase] = useState<'in' | 'hold' | 'out' | 'done'>('in')
-  const cfg = CONFIG[type]
+  const cfg = CFG[type]
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase('hold'), 150)
-    const t2 = setTimeout(() => setPhase('out'), type === 'mystery' ? 2800 : 2500)
-    const t3 = setTimeout(() => setPhase('done'), type === 'mystery' ? 3600 : 3300)
+    const t1 = setTimeout(() => setPhase('hold'), 120)
+    const holdDur = type === 'mystery' ? 2900 : type === 'psa' ? 2700 : 2500
+    const t2 = setTimeout(() => setPhase('out'), holdDur)
+    const t3 = setTimeout(() => setPhase('done'), holdDur + 820)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [type])
 
   if (phase === 'done') return null
 
-  const isActive = phase === 'hold' || phase === 'out'
+  const active = phase === 'hold' || phase === 'out'
 
   return (
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 9996,
-        background: `radial-gradient(ellipse at 50% 40%, ${cfg.glow} 0%, var(--void) 65%)`,
+        background: `radial-gradient(ellipse at 50% 42%, ${cfg.bg} 0%, #080808 68%)`,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
         overflow: 'hidden',
         transform: phase === 'out' ? 'translateY(-100%)' : 'translateY(0)',
-        transition: phase === 'out' ? 'transform 0.78s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
+        transition: phase === 'out' ? 'transform 0.82s cubic-bezier(0.76, 0, 0.24, 1)' : 'none',
         pointerEvents: phase === 'out' ? 'none' : 'all',
       }}
     >
-      {/* Grid overlay */}
+      {/* Subtle grid */}
       <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.022,
-        backgroundImage: 'linear-gradient(var(--ghost) 1px, transparent 1px), linear-gradient(90deg, var(--ghost) 1px, transparent 1px)',
-        backgroundSize: '70px 70px',
+        position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.018,
+        backgroundImage: 'linear-gradient(#F0F0F0 1px,transparent 1px),linear-gradient(90deg,#F0F0F0 1px,transparent 1px)',
+        backgroundSize: '72px 72px',
       }} />
-
-      {/* Floating particles */}
-      {PARTICLES.map((p, i) => (
-        <div
-          key={i}
-          className="particle"
-          style={{
-            position: 'absolute',
-            left: `${p.x}%`,
-            width: p.size, height: p.size,
-            background: p.orange ? cfg.particleColor : '#FA5D29',
-            animationDuration: `${p.dur}s`,
-            animationDelay: `${p.delay}s`,
-          }}
-        />
-      ))}
 
       {/* Scan line */}
       <div style={{
-        position: 'absolute', left: 0, right: 0, height: '1px',
-        background: `linear-gradient(90deg, transparent, ${cfg.accent}, transparent)`,
-        animation: isActive ? 'loader-scan 1.8s ease-in-out infinite' : 'none',
-        opacity: 0.7,
+        position: 'absolute', left: 0, right: 0, height: 1,
+        background: `linear-gradient(90deg,transparent,${cfg.accent},transparent)`,
+        animation: active ? 'loader-scan 2s ease-in-out infinite' : 'none',
+        opacity: 0.65,
       }} />
 
-      {/* ── Category animation ── */}
-      <div style={{ marginBottom: 44 }}>
-        {type === 'mystery'    && <MysteryAnim active={isActive} />}
-        {type === 'psa'        && <PsaAnim active={isActive} />}
-        {type === 'booster'    && <BoosterAnim active={isActive} />}
-        {type === 'singles'    && <SinglesAnim active={isActive} />}
-        {type === 'collection' && <MysteryAnim active={isActive} />}
-        {type === 'vykup'      && <VykupAnim active={isActive} />}
-        {type === 'shop'       && <BoosterAnim active={isActive} />}
+      {/* ── Animation ── */}
+      <div style={{ marginBottom: 48, pointerEvents: 'none' }}>
+        {type === 'mystery'    && <MysteryIntro active={active} />}
+        {type === 'psa'        && <PsaIntro active={active} />}
+        {type === 'booster'    && <BoosterIntro active={active} />}
+        {type === 'singles'    && <SinglesIntro active={active} />}
+        {type === 'collection' && <BoosterIntro active={active} />}
+        {type === 'vykup'      && <VykupIntro active={active} />}
+        {type === 'shop'       && <BoosterIntro active={active} />}
       </div>
 
       {/* ── Title ── */}
       <div style={{ overflow: 'hidden', textAlign: 'center' }}>
         <motion.h1
-          initial={{ y: '105%' }}
-          animate={{ y: isActive ? 0 : '105%' }}
-          transition={{ delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ y: '106%' }}
+          animate={{ y: active ? 0 : '106%' }}
+          transition={{ delay: 0.52, duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
           style={{
             fontFamily: 'Bebas Neue, sans-serif',
-            fontSize: 'clamp(56px, 10vw, 110px)',
-            lineHeight: 0.9,
-            color: 'var(--ghost)',
-            letterSpacing: '0.03em',
-            margin: 0,
+            fontSize: 'clamp(52px, 9vw, 108px)',
+            lineHeight: 0.9, color: '#F0F0F0',
+            letterSpacing: '0.03em', margin: 0,
           }}
         >
           {title}
         </motion.h1>
       </div>
 
-      {/* ── Subtitle / accent line ── */}
       {subtitle && (
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isActive ? 1 : 0 }}
-          transition={{ delay: 0.85, duration: 0.5 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: active ? 1 : 0, y: active ? 0 : 10 }}
+          transition={{ delay: 0.9, duration: 0.5 }}
           style={{
             fontFamily: 'Space Mono, monospace', fontSize: 10,
-            letterSpacing: '0.38em', color: cfg.accent,
-            marginTop: 12, margin: '12px 0 0',
+            letterSpacing: '0.4em', color: cfg.accent,
+            margin: '14px 0 0',
           }}
         >
           {subtitle}
@@ -392,24 +488,24 @@ export default function PageIntro({ type, title, subtitle }: Props) {
       )}
 
       {/* ── Progress bar ── */}
-      <div style={{ marginTop: 40, width: 160, height: 1, background: 'var(--surface-2)', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ marginTop: 38, width: 180, height: 1, background: '#1A1A1A', position: 'relative', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', top: 0, left: 0, height: '100%',
           background: cfg.accent,
-          animation: isActive ? `loader-progress ${type === 'mystery' ? 2.6 : 2.3}s ease forwards` : 'none',
+          animation: active ? `loader-progress ${type === 'mystery' ? 2.75 : type === 'psa' ? 2.55 : 2.35}s ease forwards` : 'none',
         }} />
       </div>
 
-      {/* ── Skip button ── */}
+      {/* ── Skip ── */}
       <motion.button
         initial={{ opacity: 0 }}
-        animate={{ opacity: isActive ? 0.38 : 0 }}
-        transition={{ delay: 0.8 }}
+        animate={{ opacity: active ? 0.35 : 0 }}
+        transition={{ delay: 0.9 }}
         onClick={() => setPhase('out')}
         style={{
-          position: 'absolute', bottom: 24, right: 28,
+          position: 'absolute', bottom: 22, right: 26,
           background: 'none', border: '1px solid rgba(255,255,255,0.1)',
-          color: 'rgba(255,255,255,0.4)',
+          color: 'rgba(255,255,255,0.38)',
           fontFamily: 'Space Mono, monospace', fontSize: 9,
           letterSpacing: '0.22em', padding: '7px 14px',
           cursor: 'none',
