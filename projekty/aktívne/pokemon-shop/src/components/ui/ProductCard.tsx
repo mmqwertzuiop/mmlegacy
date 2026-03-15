@@ -8,6 +8,7 @@ import { formatPrice } from '@/data/products'
 import RarityBadge from './RarityBadge'
 import CartButton from './CartButton'
 import MysteryBox3D from './MysteryBox3D'
+import WowRevealOverlay from './WowRevealOverlay'
 
 interface ProductCardProps {
   product: Product
@@ -17,6 +18,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, featured }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [mouseNorm, setMouseNorm] = useState({ x: 0.5, y: 0.5 })
+  const [showReveal, setShowReveal] = useState(false)
 
   const isPsa10 = product.psa_grade === 10
   const isHot = product.stock > 0 && product.stock <= 3
@@ -137,10 +139,15 @@ export default function ProductCard({ product, featured }: ProductCardProps) {
           </div>
         )}
 
-        {/* Image area */}
-        <Link href={`/shop/${product.slug}`} className="block relative overflow-hidden" style={{ aspectRatio: '3/4' }}>
+        {/* Image area — click opens WOW reveal overlay */}
+        <Link
+          href={`/shop/${product.slug}`}
+          className="block relative overflow-hidden"
+          style={{ aspectRatio: '3/4' }}
+          onClick={(e) => { e.preventDefault(); setShowReveal(true) }}
+        >
           {product.mystery_tier ? (
-            // Mystery box: full 3D interactive box
+            // Mystery box: 3D box rotating (click → overlay for big reveal)
             <div className="absolute inset-0" style={{
               background: `linear-gradient(135deg, var(--surface) 0%, ${
                 product.mystery_tier === 'Diamond' ? '#B9F2FF12' :
@@ -150,7 +157,7 @@ export default function ProductCard({ product, featured }: ProductCardProps) {
                 '#CD7F3210'
               } 100%)`,
             }}>
-              <MysteryBox3D tier={product.mystery_tier} />
+              <MysteryBox3D tier={product.mystery_tier} interactive={false} />
             </div>
           ) : product.img_url ? (
             <Image
@@ -260,6 +267,14 @@ export default function ProductCard({ product, featured }: ProductCardProps) {
           <CartButton product={product} fullWidth className="mt-3" />
         </div>
       </motion.div>
+
+      {/* WOW Reveal Overlay */}
+      {showReveal && (
+        <WowRevealOverlay
+          product={product}
+          onClose={() => setShowReveal(false)}
+        />
+      )}
     </div>
   )
 }

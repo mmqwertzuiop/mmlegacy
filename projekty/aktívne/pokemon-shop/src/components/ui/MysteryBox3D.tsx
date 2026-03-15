@@ -22,8 +22,24 @@ const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
   useAccent: i % 3 !== 0,
 }))
 
-export default function MysteryBox3D({ tier = 'Gold' }: { tier?: string }) {
+export default function MysteryBox3D({
+  tier = 'Gold',
+  interactive = true,
+  autoOpen = false,
+}: {
+  tier?: string
+  interactive?: boolean
+  autoOpen?: boolean
+}) {
   const [phase, setPhase] = useState<Phase>('idle')
+
+  // Auto-open sequence (for overlay use)
+  useEffect(() => {
+    if (!autoOpen) return
+    const t1 = setTimeout(() => setPhase('shaking'), 700)
+    const t2 = setTimeout(() => setPhase('open'), 1280)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [autoOpen])
   const col = TIERS[tier] ?? TIERS.Gold
 
   // Box dimensions
@@ -79,9 +95,9 @@ export default function MysteryBox3D({ tier = 'Gold' }: { tier?: string }) {
         cursor: 'pointer',
         userSelect: 'none',
       }}
-      onMouseEnter={() => { if (phase === 'idle') setPhase('hover') }}
-      onMouseLeave={() => { if (phase === 'hover') setPhase('idle') }}
-      onClick={handleClick}
+      onMouseEnter={() => { if (interactive && phase === 'idle') setPhase('hover') }}
+      onMouseLeave={() => { if (interactive && phase === 'hover') setPhase('idle') }}
+      onClick={interactive ? handleClick : undefined}
     >
       {/* Ground glow */}
       <motion.div
