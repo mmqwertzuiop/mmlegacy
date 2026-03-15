@@ -48,6 +48,16 @@ const POS = [
   { x:  290, y: 70,  r:  30 },
 ]
 
+// Each card enters from a unique direction after loader
+const ORIGINS = [
+  { x: -900, y: -150, rotate: -80 },
+  { x: -500, y: -750, rotate: -45 },
+  { x: -150, y: -900, rotate: -18 },
+  { x:  150, y: -900, rotate:  18 },
+  { x:  500, y: -750, rotate:  45 },
+  { x:  900, y: -150, rotate:  80 },
+]
+
 const CARD_W = 178
 const CARD_H = 249
 
@@ -99,7 +109,7 @@ function HeroCardFan() {
       {HERO_CARDS.map((card, i) => (
         <motion.div
           key={i}
-          initial={{ x: 0, y: -700, rotate: 0, opacity: 0 }}
+          initial={{ x: ORIGINS[i].x, y: ORIGINS[i].y, rotate: ORIGINS[i].rotate, opacity: 0 }}
           animate={{
             x: POS[i].x,
             y: POS[i].y,
@@ -107,9 +117,12 @@ function HeroCardFan() {
             opacity: 1,
           }}
           transition={{
-            delay: 0.15 + i * 0.13,
-            duration: 1.0,
-            ease: [0.22, 1, 0.36, 1],
+            type: 'spring',
+            stiffness: 65,
+            damping: 11,
+            mass: 1.0,
+            delay: 2.55 + i * 0.14,
+            opacity: { type: 'tween', duration: 0.35, delay: 2.55 + i * 0.14 },
           }}
           whileHover={{
             y: POS[i].y - 32,
