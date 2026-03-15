@@ -84,8 +84,9 @@ export default function PageLoader() {
           overflow: 'hidden',
         }}>
           <div style={{
-            position: 'absolute', top: 0, left: 0, height: '100%',
-            background: 'var(--orange)',
+            position: 'absolute', top: 0, left: 0, right: 0, height: '100%',
+            background: 'linear-gradient(90deg, transparent, var(--orange), transparent)',
+            transformOrigin: 'center',
             animation: 'loader-progress 1.6s ease forwards',
           }} />
         </div>

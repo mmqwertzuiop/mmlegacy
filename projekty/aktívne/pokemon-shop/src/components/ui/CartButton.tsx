@@ -50,19 +50,19 @@ export default function CartButton({ product, fullWidth = false }: CartButtonPro
         position: 'relative',
         overflow: 'hidden',
         background: disabled
-          ? 'transparent'
+          ? 'rgba(255,255,255,0.02)'
           : added
           ? 'linear-gradient(135deg, var(--green), #16a34a)'
           : hovering
           ? 'linear-gradient(135deg, var(--orange), #e85b20)'
-          : 'transparent',
+          : 'linear-gradient(135deg, rgba(250,93,41,0.1), rgba(250,93,41,0.04))',
         color: disabled ? 'var(--dim)' : added || hovering ? '#000' : 'var(--orange)',
-        border: `1px solid ${disabled ? 'var(--surface-2)' : added ? 'var(--green)' : 'var(--orange)'}`,
+        border: `1px solid ${disabled ? 'rgba(255,255,255,0.06)' : added ? 'var(--green)' : hovering ? 'var(--orange)' : 'rgba(250,93,41,0.5)'}`,
         boxShadow: added
           ? '0 0 24px rgba(34,197,94,0.5), 0 0 48px rgba(34,197,94,0.15), inset 0 1px 0 rgba(255,255,255,0.15)'
           : hovering
           ? '0 0 20px rgba(250,93,41,0.35), 0 0 40px rgba(250,93,41,0.1), inset 0 1px 0 rgba(255,255,255,0.1)'
-          : 'none',
+          : '0 0 12px rgba(250,93,41,0.12), inset 0 1px 0 rgba(255,255,255,0.04)',
         transition: 'background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.25s ease',
       }}
     >

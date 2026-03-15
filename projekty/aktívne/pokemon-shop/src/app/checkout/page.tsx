@@ -61,13 +61,17 @@ function FloatInput({
         className="w-full font-mono text-sm outline-none"
         style={{
           background: focused
-            ? 'rgba(250,93,41,0.04)'
-            : 'var(--surface)',
-          border: `1px solid ${focused ? 'var(--orange)' : 'var(--surface-2)'}`,
+            ? 'rgba(250,93,41,0.05)'
+            : 'rgba(255,255,255,0.03)',
+          border: 'none',
+          borderBottom: `2px solid ${focused ? 'var(--orange)' : value.length > 0 ? 'rgba(250,93,41,0.35)' : 'rgba(255,255,255,0.1)'}`,
+          borderLeft: `3px solid ${focused ? 'var(--orange)' : value.length > 0 ? 'rgba(250,93,41,0.35)' : 'rgba(255,255,255,0.06)'}`,
           color: 'var(--ghost)',
           padding: '24px 14px 8px',
-          boxShadow: focused ? '0 0 0 3px rgba(250,93,41,0.08), inset 0 1px 3px rgba(0,0,0,0.2)' : 'none',
-          transition: 'background 0.15s, border-color 0.15s, box-shadow 0.15s',
+          boxShadow: focused
+            ? '0 4px 20px rgba(250,93,41,0.08), inset 0 0 0 1px rgba(250,93,41,0.08)'
+            : 'inset 0 1px 3px rgba(0,0,0,0.15)',
+          transition: 'background 0.15s, border-color 0.2s, box-shadow 0.2s',
           cursor: 'text',
         }}
       />
