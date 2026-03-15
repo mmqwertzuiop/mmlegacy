@@ -50,20 +50,20 @@ export default function CartButton({ product, fullWidth = false }: CartButtonPro
         position: 'relative',
         overflow: 'hidden',
         background: disabled
-          ? 'rgba(255,255,255,0.02)'
+          ? 'transparent'
           : added
-          ? 'linear-gradient(135deg, var(--green), #16a34a)'
+          ? 'linear-gradient(135deg, #22c55e, #16a34a)'
           : hovering
-          ? 'linear-gradient(135deg, var(--orange), #e85b20)'
-          : 'linear-gradient(135deg, rgba(250,93,41,0.1), rgba(250,93,41,0.04))',
-        color: disabled ? 'var(--dim)' : added || hovering ? '#000' : 'var(--orange)',
-        border: `1px solid ${disabled ? 'rgba(255,255,255,0.06)' : added ? 'var(--green)' : hovering ? 'var(--orange)' : 'rgba(250,93,41,0.5)'}`,
+          ? 'linear-gradient(160deg, #ff7040, #fa5d29, #d44418)'
+          : 'transparent',
+        color: disabled ? 'var(--dim)' : added ? '#000' : hovering ? '#000' : 'var(--orange)',
+        border: `2px solid ${disabled ? 'rgba(255,255,255,0.08)' : added ? '#22c55e' : 'var(--orange)'}`,
         boxShadow: added
-          ? '0 0 24px rgba(34,197,94,0.5), 0 0 48px rgba(34,197,94,0.15), inset 0 1px 0 rgba(255,255,255,0.15)'
+          ? '0 0 20px rgba(34,197,94,0.45), 0 0 40px rgba(34,197,94,0.12)'
           : hovering
-          ? '0 0 20px rgba(250,93,41,0.35), 0 0 40px rgba(250,93,41,0.1), inset 0 1px 0 rgba(255,255,255,0.1)'
-          : '0 0 12px rgba(250,93,41,0.12), inset 0 1px 0 rgba(255,255,255,0.04)',
-        transition: 'background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.25s ease',
+          ? '0 0 24px rgba(250,93,41,0.5), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+          : '0 0 10px rgba(250,93,41,0.18)',
+        transition: 'background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease',
       }}
     >
       {/* Shine sweep on hover */}

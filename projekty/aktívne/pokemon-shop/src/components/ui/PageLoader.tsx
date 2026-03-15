@@ -76,17 +76,25 @@ export default function PageLoader() {
 
         {/* Progress bar */}
         <div style={{
-          marginTop: '48px',
+          margin: '48px auto 0',
           width: '180px',
-          height: '1px',
-          background: 'var(--surface-2)',
+          height: '2px',
+          background: 'rgba(255,255,255,0.06)',
           position: 'relative',
           overflow: 'hidden',
         }}>
+          {/* left half — grows leftward from center */}
           <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, height: '100%',
-            background: 'linear-gradient(90deg, transparent, var(--orange), transparent)',
-            transformOrigin: 'center',
+            position: 'absolute', top: 0, right: '50%', height: '100%', width: '50%',
+            background: 'linear-gradient(to left, var(--orange), rgba(250,93,41,0.3))',
+            transformOrigin: 'right center',
+            animation: 'loader-progress 1.6s ease forwards',
+          }} />
+          {/* right half — grows rightward from center */}
+          <div style={{
+            position: 'absolute', top: 0, left: '50%', height: '100%', width: '50%',
+            background: 'linear-gradient(to right, var(--orange), rgba(250,93,41,0.3))',
+            transformOrigin: 'left center',
             animation: 'loader-progress 1.6s ease forwards',
           }} />
         </div>
