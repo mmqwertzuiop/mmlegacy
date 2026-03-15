@@ -2,118 +2,83 @@
 import { useEffect, useRef } from 'react'
 
 export default function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null)
+  const dotRef  = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const ringPos = useRef({ x: 0, y: 0 })
   const mousePos = useRef({ x: 0, y: 0 })
-  const rafRef = useRef<number>(0)
-  const magnetRef = useRef<{ el: HTMLElement; rect: DOMRect } | null>(null)
+  const rafRef  = useRef<number>(0)
 
   useEffect(() => {
-    const dot = dotRef.current
+    const dot  = dotRef.current
     const ring = ringRef.current
     if (!dot || !ring) return
 
-    const MAGNETIC_THRESHOLD = 80
-    const MAGNETIC_PULL = 0.38
-
-    const move = (e: MouseEvent) => {
+    // ── Move dot instantly, ring follows with lag ──────────────
+    const onMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY }
       dot.style.left = e.clientX + 'px'
-      dot.style.top = e.clientY + 'px'
-
-      // Check magnetic elements
-      let found = false
-      document.querySelectorAll('[data-magnetic], .btn-primary, button:not([disabled])').forEach(el => {
-        const rect = (el as HTMLElement).getBoundingClientRect()
-        const cx = rect.left + rect.width / 2
-        const cy = rect.top + rect.height / 2
-        const dist = Math.hypot(e.clientX - cx, e.clientY - cy)
-        if (dist < MAGNETIC_THRESHOLD) {
-          magnetRef.current = { el: el as HTMLElement, rect }
-          found = true
-
-          // Pull element toward cursor
-          const dx = (e.clientX - cx) * MAGNETIC_PULL
-          const dy = (e.clientY - cy) * MAGNETIC_PULL
-          ;(el as HTMLElement).style.transform = `translate(${dx}px, ${dy}px)`
-          ;(el as HTMLElement).style.transition = 'transform 0.2s ease'
-
-          ring.classList.add('magnetic')
-          dot.classList.add('magnetic')
-        } else {
-          // Reset element if not hovered
-          if (magnetRef.current?.el === el) {
-            ;(el as HTMLElement).style.transform = 'translate(0,0)'
-            magnetRef.current = null
-          }
-        }
-      })
-
-      if (!found) {
-        ring.classList.remove('magnetic')
-        dot.classList.remove('magnetic')
-      }
+      dot.style.top  = e.clientY + 'px'
     }
 
     const animate = () => {
-      // If near a magnetic element, snap ring to element center
-      if (magnetRef.current) {
-        const { rect } = magnetRef.current
-        const cx = rect.left + rect.width / 2
-        const cy = rect.top + rect.height / 2
-        ringPos.current.x += (cx - ringPos.current.x) * 0.18
-        ringPos.current.y += (cy - ringPos.current.y) * 0.18
-      } else {
-        ringPos.current.x += (mousePos.current.x - ringPos.current.x) * 0.12
-        ringPos.current.y += (mousePos.current.y - ringPos.current.y) * 0.12
-      }
+      ringPos.current.x += (mousePos.current.x - ringPos.current.x) * 0.11
+      ringPos.current.y += (mousePos.current.y - ringPos.current.y) * 0.11
       ring.style.left = ringPos.current.x + 'px'
-      ring.style.top = ringPos.current.y + 'px'
+      ring.style.top  = ringPos.current.y + 'px'
       rafRef.current = requestAnimationFrame(animate)
     }
 
-    const hover = (e: Event) => {
-      const el = e.currentTarget as HTMLElement
-      if (!el.closest('[data-magnetic], .btn-primary')) {
-        dot.classList.add('hovering')
-        ring.classList.add('hovering')
-      }
+    // ── Hover state — only cursor changes, nothing else ────────
+    const onEnter = (e: Event) => {
+      const target = e.currentTarget as HTMLElement
+      // Skip if it's inside an overlay/modal (those handle their own cursor)
+      if (target.closest('[data-no-cursor-effect]')) return
+      dot.classList.add('hovering')
+      ring.classList.add('hovering')
     }
-    const unhover = (e: Event) => {
-      const el = e.currentTarget as HTMLElement
-      // Reset magnetic pull on leave
-      el.style.transform = 'translate(0,0)'
+
+    const onLeave = () => {
       dot.classList.remove('hovering')
       ring.classList.remove('hovering')
-      ring.classList.remove('magnetic')
-      dot.classList.remove('magnetic')
-      magnetRef.current = null
     }
 
-    document.addEventListener('mousemove', move)
+    // ── Attach hover listeners via delegation ─────────────────
+    // Using event delegation instead of attaching to every element
+    // avoids MutationObserver re-attachment storms and transform conflicts
+    const onDocEnter = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const interactive = target.closest('a, button, [data-cursor-hover], input, select, textarea, label')
+      if (interactive && !interactive.closest('[data-no-cursor-effect]')) {
+        dot.classList.add('hovering')
+        ring.classList.add('hovering')
+      } else {
+        dot.classList.remove('hovering')
+        ring.classList.remove('hovering')
+      }
+    }
+
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseover', onDocEnter)
     rafRef.current = requestAnimationFrame(animate)
 
-    const attachHover = () => {
-      document.querySelectorAll('a, button, [data-cursor-hover]').forEach(el => {
-        el.addEventListener('mouseenter', hover)
-        el.addEventListener('mouseleave', unhover)
-      })
-    }
-    attachHover()
-    const observer = new MutationObserver(attachHover)
-    observer.observe(document.body, { childList: true, subtree: true })
+    // Hide cursor when leaving window
+    const onLeaveDoc = () => { dot.style.opacity = '0'; ring.style.opacity = '0' }
+    const onEnterDoc = () => { dot.style.opacity = '1'; ring.style.opacity = '1' }
+    document.addEventListener('mouseleave', onLeaveDoc)
+    document.addEventListener('mouseenter', onEnterDoc)
 
     return () => {
-      document.removeEventListener('mousemove', move)
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseover', onDocEnter)
+      document.removeEventListener('mouseleave', onLeaveDoc)
+      document.removeEventListener('mouseenter', onEnterDoc)
       cancelAnimationFrame(rafRef.current)
-      observer.disconnect()
     }
   }, [])
 
   return (
     <>
-      <div ref={dotRef} className="cursor-dot hidden md:block" />
+      <div ref={dotRef}  className="cursor-dot  hidden md:block" />
       <div ref={ringRef} className="cursor-ring hidden md:block" />
     </>
   )
