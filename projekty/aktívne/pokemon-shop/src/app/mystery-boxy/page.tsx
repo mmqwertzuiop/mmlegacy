@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { MYSTERY_BOX_TIERS, formatPrice } from '@/data/products'
 import CountdownTimer from '@/components/ui/CountdownTimer'
 import PageIntro from '@/components/ui/PageIntro'
+import { useCartStore } from '@/lib/cart'
+import type { Product } from '@/types'
 
 // ─────────────────────────────────────────────────────────────
 // DATA
@@ -263,7 +265,26 @@ function PaymentBadges() {
 export default function MysteryBoxyPage() {
   const [flipped, setFlipped] = useState<Record<number, boolean>>({})
   const [selectedTier, setSelectedTier] = useState<number | null>(null)
+  const [addedTierId, setAddedTierId] = useState<string | null>(null)
   const tiersRef = useRef<HTMLDivElement>(null)
+  const addItem = useCartStore(s => s.addItem)
+
+  const handleOrder = (tier: typeof MYSTERY_BOX_TIERS[0], stock: number) => {
+    const product: Product = {
+      id: `mystery-box-${tier.id}`,
+      slug: `mystery-box-${tier.name.toLowerCase()}`,
+      name: `Mystery Box ${tier.name}`,
+      category: 'mystery-box',
+      price: tier.price,
+      stock,
+      img_url: '',
+      is_mystery_box: true,
+      mystery_tier: tier.name,
+    }
+    addItem(product)
+    setAddedTierId(tier.id)
+    setTimeout(() => setAddedTierId(null), 2200)
+  }
 
   const scrollToTiers = useCallback(() => {
     tiersRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -274,14 +295,35 @@ export default function MysteryBoxyPage() {
     <PageIntro type="mystery" title="MYSTERY BOXY" subtitle="GAMIFIED UNBOXING" />
     <div style={{ background: 'var(--void)', minHeight: '100vh', paddingBottom: 80 }}>
 
-      {/* ── TRUST STRIP ── */}
-      <div className="trust-strip">
-        <div className="trust-strip-item" style={{ color: 'var(--green)' }}><span>🔒</span> Bezpečná platba</div>
-        <div className="trust-strip-item"><span>📦</span> Doručenie 2–4 dni</div>
-        <div className="trust-strip-item"><span>✓</span> Originálne produkty</div>
-        <div className="trust-strip-item"><span>⭐</span> 1 200+ spokojných zákazníkov</div>
-        <div className="trust-strip-item hide-mobile" style={{ color: 'var(--orange)' }}><span>🎁</span> Každý box ručne zostavený</div>
-        <div className="trust-strip-item hide-mobile"><span>↩</span> Vrátenie do 14 dní</div>
+      {/* ── TRUST MARQUEE ── */}
+      <div className="trust-marquee-wrap">
+        <div className="trust-marquee-track">
+          {[
+            { icon: '🔒', label: 'BEZPEČNÁ PLATBA', color: 'var(--green)' },
+            { icon: '📦', label: 'DORUČENIE 2–4 DNI', color: 'var(--ghost)' },
+            { icon: '✦', label: 'ORIGINÁLNE PRODUKTY', color: 'var(--orange)' },
+            { icon: '⭐', label: '1 200+ ZÁKAZNÍKOV', color: 'var(--gold)' },
+            { icon: '🎁', label: 'RUČNE ZOSTAVENÉ BOXY', color: 'var(--ghost)' },
+            { icon: '↩', label: 'VRÁTENIE 14 DNÍ', color: 'var(--ghost)' },
+            { icon: '⚡', label: 'RÝCHLE ODOSLANIE', color: 'var(--orange)' },
+            { icon: '🏆', label: 'PRÉMIOVÁ KVALITA', color: 'var(--gold)' },
+          ].concat([
+            { icon: '🔒', label: 'BEZPEČNÁ PLATBA', color: 'var(--green)' },
+            { icon: '📦', label: 'DORUČENIE 2–4 DNI', color: 'var(--ghost)' },
+            { icon: '✦', label: 'ORIGINÁLNE PRODUKTY', color: 'var(--orange)' },
+            { icon: '⭐', label: '1 200+ ZÁKAZNÍKOV', color: 'var(--gold)' },
+            { icon: '🎁', label: 'RUČNE ZOSTAVENÉ BOXY', color: 'var(--ghost)' },
+            { icon: '↩', label: 'VRÁTENIE 14 DNÍ', color: 'var(--ghost)' },
+            { icon: '⚡', label: 'RÝCHLE ODOSLANIE', color: 'var(--orange)' },
+            { icon: '🏆', label: 'PRÉMIOVÁ KVALITA', color: 'var(--gold)' },
+          ]).map((item, i) => (
+            <span key={i} className="trust-marquee-item" style={{ color: item.color }}>
+              <span className="trust-marquee-icon">{item.icon}</span>
+              {item.label}
+              <span className="trust-marquee-sep">◆</span>
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* ── BREADCRUMB ── */}
@@ -498,11 +540,38 @@ export default function MysteryBoxyPage() {
                       👁 <span style={{ color: 'var(--ghost)' }}>{meta.browsers}</span> ľudia si prezerajú tento tier
                     </div>
 
-                    <button style={{ width: '100%', padding: '14px 0', fontFamily: S.mono, fontWeight: 700, fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', background: tier.color, color: '#000', border: 'none', cursor: 'pointer', transition: 'opacity 0.2s, transform 0.2s' }}
-                      onMouseEnter={e => { e.currentTarget.style.opacity='0.85'; e.currentTarget.style.transform='scale(0.98)' }}
-                      onMouseLeave={e => { e.currentTarget.style.opacity='1'; e.currentTarget.style.transform='scale(1)' }}>
-                      OBJEDNAŤ — {formatPrice(tier.price)}
-                    </button>
+                    <motion.button
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => handleOrder(tier, meta.stock)}
+                      style={{
+                        width: '100%', padding: '14px 0',
+                        fontFamily: S.mono, fontWeight: 700, fontSize: 11,
+                        letterSpacing: '0.18em', textTransform: 'uppercase',
+                        background: addedTierId === tier.id
+                          ? 'linear-gradient(135deg, #22c55e, #16a34a)'
+                          : `linear-gradient(160deg, ${tier.color}, ${tier.color}cc)`,
+                        color: '#000',
+                        border: addedTierId === tier.id ? '1px solid #22c55e' : '1px solid rgba(255,255,255,0.15)',
+                        cursor: 'none',
+                        boxShadow: addedTierId === tier.id
+                          ? '0 0 20px rgba(34,197,94,0.4)'
+                          : `0 0 16px ${tier.color}40, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                        transition: 'background 0.2s, box-shadow 0.2s',
+                        position: 'relative', overflow: 'hidden',
+                      }}
+                    >
+                      <AnimatePresence mode="wait">
+                        {addedTierId === tier.id ? (
+                          <motion.span key="added" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            ✓ PRIDANÉ DO KOŠÍKA
+                          </motion.span>
+                        ) : (
+                          <motion.span key="order" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                            OBJEDNAŤ — {formatPrice(tier.price)}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </motion.button>
                   </div>
                 </motion.div>
               )
