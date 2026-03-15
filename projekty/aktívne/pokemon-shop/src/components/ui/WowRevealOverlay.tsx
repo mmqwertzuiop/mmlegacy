@@ -219,8 +219,8 @@ function SinglesReveal({ product, phase }: { product: Product; phase: Phase }) {
   return (
     <div style={{ perspective: '900px', perspectiveOrigin: '50% 50%' }}>
       <motion.div
-        initial={{ rotateY: 180, scale: 0.75 }}
-        animate={{ rotateY: isReveal ? 0 : 180, scale: isReveal ? 1 : 0.75 }}
+        initial={{ rotateY: 0, scale: 0.75 }}
+        animate={{ rotateY: isReveal ? 180 : 0, scale: isReveal ? 1 : 0.75 }}
         transition={{ type: 'spring', stiffness: 52, damping: 10, delay: 0.3 }}
         style={{ transformStyle: 'preserve-3d', position: 'relative', width: 220, height: 308 }}
       >
