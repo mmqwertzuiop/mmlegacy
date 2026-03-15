@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { MYSTERY_BOX_TIERS, formatPrice } from '@/data/products'
 import CountdownTimer from '@/components/ui/CountdownTimer'
+import PageIntro from '@/components/ui/PageIntro'
 
 const PREVIOUS_OPENS = [
   { user: 'M***aster', tier: 'Diamond', got: 'PSA 10 Charizard ex SIR', value: '400€+', color: '#B9F2FF' },
@@ -87,6 +88,8 @@ export default function MysteryBoxyPage() {
   const [flipped, setFlipped] = useState<Record<number, boolean>>({})
 
   return (
+    <>
+    <PageIntro type="mystery" title="MYSTERY BOXY" subtitle="GAMIFIED UNBOXING" />
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
 
       {/* ── BREADCRUMB ── */}
@@ -348,5 +351,6 @@ export default function MysteryBoxyPage() {
         </div>
       </section>
     </div>
+    </>
   )
 }

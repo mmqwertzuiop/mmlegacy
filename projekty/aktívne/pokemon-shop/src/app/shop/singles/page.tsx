@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { getProductsByCategory } from '@/lib/products-db'
 import ProductGrid from '@/components/shop/ProductGrid'
+import PageIntro from '@/components/ui/PageIntro'
 
 export const revalidate = 60
 
@@ -13,6 +14,8 @@ export default async function SinglesPage() {
   const products = await getProductsByCategory('singles')
 
   return (
+    <>
+    <PageIntro type="singles" title="SINGLES" subtitle="RARE & ULTRA RARE" />
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
       <div className="max-w-7xl mx-auto px-6 md:px-10 py-16">
         <div className="mb-12" style={{ borderBottom: '1px solid var(--surface-2)', paddingBottom: '2rem' }}>
@@ -25,5 +28,6 @@ export default async function SinglesPage() {
         <ProductGrid products={products} showFilters={false} />
       </div>
     </div>
+    </>
   )
 }

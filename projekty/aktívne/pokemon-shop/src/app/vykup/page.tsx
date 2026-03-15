@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import PageIntro from '@/components/ui/PageIntro'
 
 const STEPS = [
   {
@@ -45,6 +46,8 @@ const WHY = [
 
 export default function VykupPage() {
   return (
+    <>
+    <PageIntro type="vykup" title="VÝKUP KARIET" subtitle="PREDAJ NÁM SVOJU ZBIERKU" />
     <div style={{ background: 'var(--void)', minHeight: '100vh' }}>
 
       {/* Breadcrumb */}
@@ -219,5 +222,6 @@ export default function VykupPage() {
         </motion.div>
       </section>
     </div>
+    </>
   )
 }
