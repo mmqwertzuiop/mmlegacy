@@ -102,15 +102,22 @@ export default function ProductGrid({ products, showFilters = true, initialCateg
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filtered.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.45, delay: (index % 8) * 0.055, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <ProductCard product={product} />
-              </motion.div>
+              <div key={product.id} style={{ perspective: '900px' }}>
+                <motion.div
+                  initial={{ opacity: 0, rotateY: -55, scale: 0.88 }}
+                  whileInView={{ opacity: 1, rotateY: 0, scale: 1 }}
+                  viewport={{ once: true, margin: '-30px' }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 95,
+                    damping: 14,
+                    delay: (index % 8) * 0.06,
+                    opacity: { duration: 0.25, delay: (index % 8) * 0.06 },
+                  }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              </div>
             ))}
 
           </div>

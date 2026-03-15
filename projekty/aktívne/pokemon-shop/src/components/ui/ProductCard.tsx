@@ -7,6 +7,7 @@ import { Product } from '@/types'
 import { formatPrice } from '@/data/products'
 import RarityBadge from './RarityBadge'
 import CartButton from './CartButton'
+import MysteryBox3D from './MysteryBox3D'
 
 interface ProductCardProps {
   product: Product
@@ -138,7 +139,20 @@ export default function ProductCard({ product, featured }: ProductCardProps) {
 
         {/* Image area */}
         <Link href={`/shop/${product.slug}`} className="block relative overflow-hidden" style={{ aspectRatio: '3/4' }}>
-          {product.img_url ? (
+          {product.mystery_tier ? (
+            // Mystery box: full 3D interactive box
+            <div className="absolute inset-0" style={{
+              background: `linear-gradient(135deg, var(--surface) 0%, ${
+                product.mystery_tier === 'Diamond' ? '#B9F2FF12' :
+                product.mystery_tier === 'Platinum' ? '#E5E4E210' :
+                product.mystery_tier === 'Gold' ? '#FFD70012' :
+                product.mystery_tier === 'Silver' ? '#C0C0C010' :
+                '#CD7F3210'
+              } 100%)`,
+            }}>
+              <MysteryBox3D tier={product.mystery_tier} />
+            </div>
+          ) : product.img_url ? (
             <Image
               src={product.img_url}
               alt={product.name}
@@ -146,54 +160,7 @@ export default function ProductCard({ product, featured }: ProductCardProps) {
               className="object-contain p-4 transition-premium group-hover:scale-105"
               sizes="(max-width: 768px) 50vw, 25vw"
             />
-          ) : (
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{
-                background: `linear-gradient(135deg, var(--surface) 0%, ${
-                  product.mystery_tier === 'Diamond' ? '#B9F2FF20' :
-                  product.mystery_tier === 'Platinum' ? '#E5E4E220' :
-                  product.mystery_tier === 'Gold' ? '#FFD70020' :
-                  product.mystery_tier === 'Silver' ? '#C0C0C020' :
-                  '#CD7F3220'
-                } 100%)`,
-              }}
-            >
-              {(() => {
-                const tierColor =
-                  product.mystery_tier === 'Diamond' ? '#B9F2FF' :
-                  product.mystery_tier === 'Platinum' ? '#E5E4E2' :
-                  product.mystery_tier === 'Gold' ? '#FFD700' :
-                  product.mystery_tier === 'Silver' ? '#C0C0C0' :
-                  '#CD7F32'
-                const tierGlow =
-                  product.mystery_tier === 'Diamond' ? 'rgba(185,242,255,0.5)' :
-                  product.mystery_tier === 'Platinum' ? 'rgba(229,228,226,0.4)' :
-                  product.mystery_tier === 'Gold' ? 'rgba(255,215,0,0.5)' :
-                  product.mystery_tier === 'Silver' ? 'rgba(192,192,192,0.4)' :
-                  'rgba(205,127,50,0.4)'
-                return (
-                  <svg viewBox="0 0 120 130" width="72%" height="72%"
-                    style={{ filter: `drop-shadow(0 0 14px ${tierGlow})` }}
-                    xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="28" width="100" height="22" rx="3" fill={tierColor} opacity="0.9" />
-                    <rect x="53" y="28" width="14" height="22" fill="rgba(0,0,0,0.18)" />
-                    <ellipse cx="44" cy="22" rx="14" ry="8" fill={tierColor} opacity="0.85" transform="rotate(-20 44 22)" />
-                    <ellipse cx="76" cy="22" rx="14" ry="8" fill={tierColor} opacity="0.85" transform="rotate(20 76 22)" />
-                    <ellipse cx="60" cy="22" rx="7" ry="6" fill={tierColor} />
-                    <ellipse cx="60" cy="22" rx="4" ry="3.5" fill="rgba(255,255,255,0.25)" />
-                    <rect x="14" y="50" width="92" height="68" rx="3" fill={tierColor} opacity="0.18" />
-                    <rect x="14" y="50" width="92" height="68" rx="3" fill="none" stroke={tierColor} strokeWidth="2" opacity="0.7" />
-                    <rect x="53" y="50" width="14" height="68" fill={tierColor} opacity="0.22" />
-                    <rect x="14" y="72" width="92" height="12" fill={tierColor} opacity="0.22" />
-                    <text x="60" y="100" textAnchor="middle" dominantBaseline="middle"
-                      fontFamily="'Bebas Neue', sans-serif" fontSize="30" fontWeight="bold"
-                      fill={tierColor} opacity="0.95">?</text>
-                  </svg>
-                )
-              })()}
-            </div>
-          )}
+          ) : null}
 
           {/* Holographic shimmer — tracks mouse */}
           <div style={{
