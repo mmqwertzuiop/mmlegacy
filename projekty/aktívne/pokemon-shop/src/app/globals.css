@@ -317,3 +317,111 @@ body {
 .link-underline:hover::after {
   width: 100%;
 }
+
+/* ── PAGE LOADER ── */
+@keyframes loader-char-in {
+  from { opacity: 0; transform: translateY(40px) skewY(4deg); }
+  to   { opacity: 1; transform: translateY(0) skewY(0); }
+}
+@keyframes loader-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes loader-progress {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes loader-scan {
+  0%   { top: -2px; opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 0.4; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── MAGNETIC CURSOR ── */
+.cursor-dot.magnetic {
+  width: 12px;
+  height: 12px;
+  background: var(--orange);
+  mix-blend-mode: difference;
+}
+.cursor-ring.magnetic {
+  width: 64px;
+  height: 64px;
+  border-color: var(--orange);
+  background: rgba(250,93,41,0.08);
+}
+
+/* ── HERO TITLE REVEAL ── */
+@keyframes hero-word-in {
+  from { opacity: 0; transform: translateY(60px) skewY(3deg); }
+  to   { opacity: 1; transform: translateY(0) skewY(0); }
+}
+@keyframes hero-line-in {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Giant hero text clip effect */
+.hero-text-clip {
+  overflow: hidden;
+  display: block;
+}
+
+/* Horizontal marquee (large text scrolling) */
+@keyframes marquee-rtl {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-ltr {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+/* Section number accent */
+.section-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 120px;
+  color: var(--surface-2);
+  position: absolute;
+  top: -20px;
+  right: 0;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Glitch text effect */
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 90% 0); transform: translate(-2px, 0); }
+  25%       { clip-path: inset(30% 0 50% 0); transform: translate(2px, 0); }
+  50%       { clip-path: inset(60% 0 20% 0); transform: translate(-1px, 0); }
+}
+@keyframes glitch-2 {
+  0%, 100% { clip-path: inset(80% 0 0 0); transform: translate(2px, 0); }
+  25%       { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 0); }
+  50%       { clip-path: inset(40% 0 40% 0); transform: translate(1px, 0); }
+}
+.glitch {
+  position: relative;
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+.glitch::before {
+  color: var(--orange);
+  animation: glitch-1 4s infinite steps(1);
+  opacity: 0.6;
+}
+.glitch::after {
+  color: var(--blue);
+  animation: glitch-2 4s 0.5s infinite steps(1);
+  opacity: 0.4;
+}

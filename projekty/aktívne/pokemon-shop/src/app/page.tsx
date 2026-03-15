@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
+import HeroCanvas from '@/components/ui/HeroCanvas'
+import PageLoader from '@/components/ui/PageLoader'
 
 function CountUp({ to, duration = 1800, suffix = '' }: { to: number; duration?: number; suffix?: string }) {
   const [count, setCount] = useState(0)
@@ -215,84 +217,147 @@ export default function Home() {
 
   return (
     <div style={{ background: 'var(--void)' }}>
+      <PageLoader />
 
       {/* ─── HERO ─── */}
       <section style={{
         position: 'relative',
-        minHeight: 'auto',
+        height: '100vh',
+        minHeight: '700px',
         display: 'flex',
-        alignItems: 'center',
-        overflow: 'visible',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        overflow: 'hidden',
         background: 'var(--void)',
       }}>
-        {/* Grid overlay */}
+        {/* 3D Canvas background */}
+        <HeroCanvas />
+
+        {/* Radial vignette */}
         <div style={{
-          position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.04,
-          backgroundImage: 'linear-gradient(var(--surface-2) 1px, transparent 1px), linear-gradient(90deg, var(--surface-2) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse at center, transparent 30%, rgba(8,8,8,0.7) 100%)',
         }} />
 
+        {/* Grid overlay */}
         <div style={{
-          position: 'relative',
-          zIndex: 10,
-          width: '100%',
-          maxWidth: '1400px',
-          margin: '0 auto',
-          padding: '32px 48px 60px',
+          position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.025,
+          backgroundImage: 'linear-gradient(var(--ghost) 1px, transparent 1px), linear-gradient(90deg, var(--ghost) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }} />
+
+        {/* Orange glow bottom */}
+        <div style={{
+          position: 'absolute', bottom: '-80px', left: '50%', transform: 'translateX(-50%)',
+          width: '700px', height: '300px', pointerEvents: 'none',
+          background: 'radial-gradient(ellipse, rgba(250,93,41,0.18) 0%, transparent 70%)',
+        }} />
+
+        {/* Content */}
+        <div style={{
+          position: 'relative', zIndex: 10,
+          width: '100%', maxWidth: '1400px', margin: '0 auto',
+          padding: '0 48px',
           display: 'grid',
-          gridTemplateColumns: '1.1fr 1fr',
-          gap: '24px',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '32px',
           alignItems: 'center',
         }}>
-          {/* LEFT: Text */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.4em', color: 'var(--orange)', marginBottom: '20px', textTransform: 'uppercase' }}>
-              MM LEGACY — PRÉMIOVÝ TCG SHOP
-            </p>
-            <h1 style={{
-              fontFamily: 'Bebas Neue, sans-serif',
-              fontSize: 'clamp(70px, 8vw, 120px)',
-              lineHeight: 0.92,
-              color: 'var(--ghost)',
-              letterSpacing: '0.02em',
-              marginBottom: '28px',
-            }}>
-              ZBIERAJ<br />
-              <span style={{ color: 'var(--orange)' }}>LEGENDY.</span><br />
-              VLASTNI<br />
-              HISTÓRIU.
-            </h1>
-            <p style={{ fontFamily: 'Inter Tight, sans-serif', fontSize: '17px', lineHeight: 1.7, color: 'var(--dim)', maxWidth: '440px', marginBottom: '40px' }}>
-              MM Legacy je prémiový Pokemon TCG shop pre skutočných zberateľov. Boostery, graded karty a mystery boxy — všetko na jednom mieste.
-            </p>
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+          {/* LEFT */}
+          <div>
+            {/* Badge */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.0, duration: 0.6 }}
+              style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', letterSpacing: '0.45em', color: 'var(--orange)', marginBottom: '28px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '10px' }}
+            >
+              <span style={{ display: 'inline-block', width: '32px', height: '1px', background: 'var(--orange)' }} />
+              PRÉMIOVÝ TCG SHOP
+            </motion.p>
+
+            {/* Massive headline */}
+            <div style={{ overflow: 'hidden', marginBottom: '8px' }}>
+              <motion.h1
+                initial={{ y: '105%' }}
+                animate={{ y: 0 }}
+                transition={{ delay: 2.1, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  fontFamily: 'Bebas Neue, sans-serif',
+                  fontSize: 'clamp(88px, 11vw, 160px)',
+                  lineHeight: 0.88,
+                  color: 'var(--ghost)',
+                  letterSpacing: '0.01em',
+                  display: 'block',
+                }}
+              >
+                ZBIERAJ
+              </motion.h1>
+            </div>
+            <div style={{ overflow: 'hidden', marginBottom: '28px' }}>
+              <motion.span
+                initial={{ y: '105%' }}
+                animate={{ y: 0 }}
+                transition={{ delay: 2.22, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="glitch"
+                data-text="LEGENDY."
+                style={{
+                  fontFamily: 'Bebas Neue, sans-serif',
+                  fontSize: 'clamp(88px, 11vw, 160px)',
+                  lineHeight: 0.88,
+                  color: 'var(--orange)',
+                  letterSpacing: '0.01em',
+                  display: 'block',
+                }}
+              >
+                LEGENDY.
+              </motion.span>
+            </div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.5, duration: 0.7 }}
+              style={{ fontFamily: 'Inter Tight, sans-serif', fontSize: '16px', lineHeight: 1.75, color: 'var(--dim)', maxWidth: '400px', marginBottom: '40px' }}
+            >
+              Booster boxy, PSA graded karty a mystery boxy pre skutočných zberateľov. Overená autentickosť, prémiový packaging, rýchle doručenie.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.65, duration: 0.7 }}
+              style={{ display: 'flex', gap: '16px' }}
+            >
               <Link href="/shop">
-                <button className="btn-primary" style={{ padding: '16px 36px', fontSize: '12px', letterSpacing: '0.12em' }}>
+                <button data-magnetic className="btn-primary" style={{ padding: '18px 44px', fontSize: '12px', letterSpacing: '0.15em' }}>
                   OBJAVIŤ KOLEKCIU
                 </button>
               </Link>
               <Link href="/mystery-boxy">
-                <button style={{
-                  padding: '16px 36px', fontSize: '12px',
+                <button data-magnetic style={{
+                  padding: '18px 44px', fontSize: '12px',
                   fontFamily: 'Space Mono, monospace', fontWeight: 700,
                   letterSpacing: '0.12em', textTransform: 'uppercase',
-                  border: '1px solid var(--surface-2)', color: 'var(--ghost)',
+                  border: '1px solid rgba(255,255,255,0.15)', color: 'var(--ghost)',
                   background: 'transparent', cursor: 'none',
-                }}>
+                  transition: 'border-color 0.2s, background 0.2s',
+                }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--orange)'; (e.currentTarget as HTMLElement).style.background = 'rgba(250,93,41,0.06)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)'; (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+                >
                   MYSTERY BOXY
                 </button>
               </Link>
-            </div>
+            </motion.div>
 
-            {/* Stats */}
-            <div style={{
-              display: 'flex', gap: '40px', marginTop: '48px', paddingTop: '32px',
-              borderTop: '1px solid var(--surface-2)',
-            }}>
+            {/* Stats strip */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2.9, duration: 0.8 }}
+              style={{ display: 'flex', gap: '36px', marginTop: '52px', paddingTop: '28px', borderTop: '1px solid var(--surface-2)' }}
+            >
               {[
                 { value: 500, suffix: '+', label: 'Zákazníkov' },
                 { value: 100, suffix: '%', label: 'Originálne' },
@@ -300,44 +365,65 @@ export default function Home() {
                 { value: 24, suffix: 'h', label: 'Doručenie' },
               ].map((stat, i) => (
                 <div key={i}>
-                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '26px', fontWeight: 700, color: 'var(--orange)', lineHeight: 1 }}>
-                    <CountUp to={stat.value} suffix={stat.suffix} duration={1400 + i * 200} />
+                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '24px', fontWeight: 700, color: 'var(--orange)', lineHeight: 1 }}>
+                    <CountUp to={stat.value} suffix={stat.suffix} duration={1200 + i * 150} />
                   </p>
-                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '10px', color: 'var(--dim)', marginTop: '4px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{stat.label}</p>
+                  <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--dim)', marginTop: '5px', letterSpacing: '0.12em', textTransform: 'uppercase' }}>{stat.label}</p>
                 </div>
               ))}
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
-          {/* RIGHT: Cards fan + live activity */}
-          <div style={{ position: 'relative', marginLeft: '-80px' }}>
+          {/* RIGHT: Cards fan + live feed */}
+          <motion.div
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 2.2, duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            style={{ position: 'relative' }}
+          >
             <HeroCardFan />
             {/* Live activity feed */}
-            <div style={{ marginTop: '-20px', display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '360px', marginLeft: 'auto', marginRight: '0' }}>
-              <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', letterSpacing: '0.25em', color: 'var(--dim)', marginBottom: '4px' }}>● LIVE AKTIVITA</p>
+            <div style={{ marginTop: '-10px', display: 'flex', flexDirection: 'column', gap: '6px', maxWidth: '340px', marginLeft: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--green)', boxShadow: '0 0 6px var(--green)', animation: 'badge-pulse 2s infinite' }} />
+                <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', letterSpacing: '0.25em', color: 'var(--dim)' }}>LIVE AKTIVITA</p>
+              </div>
               {[
                 { user: 'M***aster', action: 'kúpil', item: 'Diamond Mystery Box', time: '2 min', color: '#B9F2FF' },
                 { user: 'U***eonfan', action: 'kúpil', item: 'Umbreon VMAX Alt Art', time: '7 min', color: 'var(--gold)' },
                 { user: 'P***achu99', action: 'objednal', item: 'PSA 10 Charizard ex SIR', time: '14 min', color: 'var(--orange)' },
               ].map((a, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--surface-2)' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: a.color, flexShrink: 0 }} />
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 2.8 + i * 0.12 }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', background: 'rgba(255,255,255,0.025)', border: '1px solid var(--surface-2)', backdropFilter: 'blur(4px)' }}
+                >
+                  <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: a.color, flexShrink: 0 }} />
                   <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--dim)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     <span style={{ color: 'var(--ghost)' }}>{a.user}</span> {a.action} <span style={{ color: a.color }}>{a.item}</span>
                   </span>
                   <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', color: 'var(--dim)', flexShrink: 0 }}>{a.time}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
 
+        {/* Scroll hint */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3.2, duration: 0.8 }}
+          style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', zIndex: 10 }}
+        >
+          <p style={{ fontFamily: 'Space Mono, monospace', fontSize: '9px', letterSpacing: '0.3em', color: 'var(--dim)' }}>SCROLL</p>
+          <div style={{ width: '1px', height: '40px', background: 'linear-gradient(var(--orange), transparent)', animation: 'float-particle 1.6s ease-in-out infinite' }} />
+        </motion.div>
+
         {/* Bottom fade */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, height: '120px',
-          background: 'linear-gradient(transparent, var(--void))',
-          pointerEvents: 'none',
-        }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '160px', background: 'linear-gradient(transparent, var(--void))', pointerEvents: 'none' }} />
       </section>
 
       {/* ─── TRENDING TICKER ─── */}
